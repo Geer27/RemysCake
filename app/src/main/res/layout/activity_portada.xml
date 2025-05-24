@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:padding="24dp"
+    tools:context=".activities.PortadaActivity">
+
+    <!-- Contenedor principal con efecto de tarjeta -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvMainContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="12dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.4">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:gravity="center">
+
+            <!-- Contenedor del logo con sombra -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="75dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="24dp">
+
+                <ImageView
+                    android:id="@+id/ivLogoPortada"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@mipmap/ic_launcher_round"
+                    android:contentDescription="Logo de la Pastelería"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título principal con gradiente -->
+            <TextView
+                android:id="@+id/tvBienvenidaPortada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bienvenido a\nEl pastel de Remy"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textColor="@color/primary_dark"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Subtítulo descriptivo -->
+            <TextView
+                android:id="@+id/tvSubtituloPortada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pasteles únicos hechos con amor"
+                android:textSize="16sp"
+                android:textColor="@color/text_secondary"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_marginBottom="40dp"
+                android:fontFamily="sans-serif-light" />
+
+            <LinearLayout
+                android:id="@+id/llBotonesPortada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Botón principal con gradiente -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnIrALoginPortada"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Iniciar Sesión"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_gradient_primary"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="28dp"
+                    app:elevation="4dp"
+                    android:layout_marginBottom="16dp"
+                    app:rippleColor="@color/ripple_white" />
+
+                <!-- Botón secundario -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnIrARegistroPortada"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Registrarse"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary_color"
+                    android:background="@drawable/button_outline_primary"
+                    app:cornerRadius="28dp"
+                    app:strokeColor="@color/primary_color"
+                    app:strokeWidth="2dp"
+                    app:rippleColor="@color/ripple_primary" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Elementos decorativos -->
+    <View
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/circle_decoration_1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.3" />
+
+    <View
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/circle_decoration_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="64dp"
+        android:layout_marginStart="24dp"
+        android:alpha="0.3" />
+
+    <!-- Texto de pie de página -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="© 2025 El pastel de Remy"
+        android:textSize="12sp"
+        android:textColor="@color/text_tertiary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp"
+        android:alpha="0.7" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
