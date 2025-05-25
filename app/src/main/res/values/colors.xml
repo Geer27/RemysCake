@@ -13,4 +13,27 @@
     <color name="primary_light">#FFE8E8</color>
     <color name="accent_light">#FFF4E6</color>
     <color name="accent_secondary">#FDCB6E</color>
+
+    <!-- Colores Admin -->
+    <color name="admin_primary">#9B59B6</color>
+    <color name="admin_secondary">#8E44AD</color>
+    <color name="admin_light">#F4E8FF</color>
+    <color name="admin_secondary_light">#E8D5FF</color>
+
+    <!-- Colores Seller -->
+    <color name="seller_primary">#E74C3C</color>
+    <color name="seller_secondary">#C0392B</color>
+    <color name="seller_light">#FFE8E6</color>
+    <color name="seller_secondary_light">#FFCCC9</color>
+
+    <!-- Colores Production -->
+    <color name="production_primary">#27AE60</color>
+    <color name="production_secondary">#229954</color>
+    <color name="production_light">#E8F8F0</color>
+    <color name="production_pending">#F39C12</color>
+    <color name="production_pending_light">#FEF3E0</color>
+    <color name="production_active">#E67E22</color>
+    <color name="production_active_light">#FDF2E9</color>
+    <color name="production_ready">#27AE60</color>
+
 </resources>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <!-- Sección Principal -->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_admin_home"
+            android:icon="@drawable/ic_home"
+            android:title="Dashboard Principal"
+            android:checked="true" />
+
+        <item
+            android:id="@+id/nav_admin_catalogo"
+            android:icon="@drawable/ic_cake"
+            android:title="Gestionar Catálogo" />
+
+        <item
+            android:id="@+id/nav_admin_usuarios"
+            android:icon="@drawable/ic_group"
+            android:title="Gestionar Usuarios" />
+
+        <item
+            android:id="@+id/nav_admin_clientes"
+            android:icon="@drawable/ic_people"
+            android:title="Gestionar Clientes" />
+
+        <item
+            android:id="@+id/nav_admin_reservas"
+            android:icon="@drawable/ic_assignment"
+            android:title="Ver Reservas" />
+    </group>
+
+    <!-- Separador -->
+    <item android:title="Análisis y Reportes">
+        <menu>
+            <item
+                android:id="@+id/nav_admin_reportes"
+                android:icon="@drawable/ic_analytics"
+                android:title="Generar Reportes" />
+
+            <item
+                android:id="@+id/nav_admin_estadisticas"
+                android:icon="@drawable/ic_trending_up"
+                android:title="Estadísticas" />
+
+            <item
+                android:id="@+id/nav_admin_backup"
+                android:icon="@drawable/ic_backup"
+                android:title="Respaldo de Datos" />
+        </menu>
+    </item>
+
+    <!-- Separador -->
+    <item android:title="Configuración">
+        <menu>
+            <item
+                android:id="@+id/nav_admin_configuracion"
+                android:icon="@drawable/ic_settings"
+                android:title="Configuración del Sistema" />
+
+            <item
+                android:id="@+id/nav_admin_perfil"
+                android:icon="@drawable/ic_person"
+                android:title="Mi Perfil" />
+        </menu>
+    </item>
+
+    <!-- Separador -->
+    <item android:title="Cuenta">
+        <menu>
+            <item
+                android:id="@+id/nav_admin_ayuda"
+                android:icon="@drawable/ic_help"
+                android:title="Ayuda y Soporte" />
+
+            <item
+                android:id="@+id/nav_admin_acerca"
+                android:icon="@drawable/ic_info"
+                android:title="Acerca de la App" />
+
+            <item
+                android:id="@+id/nav_admin_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="Cerrar Sesión" />
+        </menu>
+    </item>
+
+</menu>
