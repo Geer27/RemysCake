@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".activities.ReservasProduccionActivity">
+
+    <!-- Toolbar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageButton
+                android:id="@+id/btnBackProduccion"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_arrow_back"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Volver"
+                app:tint="@color/production_primary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tvTituloProduccion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reservas Pendientes"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/production_primary" />
+
+                <TextView
+                    android:id="@+id/tvSubtituloProduccion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gestión de producción"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnRefreshProduccion"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_refresh"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Refrescar"
+                app:tint="@color/production_primary" />
+
+            <ImageButton
+                android:id="@+id/btnNotificacionesProduccion"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_notifications"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Notificaciones"
+                app:tint="@color/production_primary"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Contenido principal -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/cvToolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Indicador de tiempo -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@drawable/gradient_production_header"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@android:color/white">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_access_time"
+                            android:layout_gravity="center"
+                            app:tint="@color/production_primary" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tiempo de Producción Hoy"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/tvTiempoProduccionHoy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4 horas estimadas"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.9" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvHoraActual"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="14:30"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Filtros de estado -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipConfirmadas"
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Confirmadas"
+                    android:textAlignment="center"
+                    android:layout_marginEnd="4dp"
+                    app:chipBackgroundColor="@color/warning_light"
+                    android:textColor="@color/warning_color"
+                    android:checked="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipEnProceso"
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="En Proceso"
+                    android:textAlignment="center"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    app:chipBackgroundColor="@color/production_active_light"
+                    android:textColor="@color/production_active" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipTerminadas"
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Terminadas"
+                    android:textAlignment="center"
+                    android:layout_marginStart="4dp"
+                    app:chipBackgroundColor="@color/success_light"
+                    android:textColor="@color/success_color" />
+
+            </LinearLayout>
+
+            <!-- Contador de reservas por estado -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Mostrando reservas confirmadas"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="1dp"
+                        app:cardBackgroundColor="@color/production_primary">
+
+                        <TextView
+                            android:id="@+id/tvContadorReservas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Lista de reservas por estado -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReservasProduccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_reserva_produccion" />
+
+            <!-- Estado vacío -->
+            <LinearLayout
+                android:id="@+id/llEstadoVacioProduccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="40dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_kitchen"
+                    app:tint="@color/text_tertiary"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No hay reservas para producir"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:textAlignment="center"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cuando haya pedidos confirmados aparecerán aquí"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_tertiary"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- FAB para acciones rápidas -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAccionesRapidas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_speed"
+        app:backgroundTint="@color/production_primary"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"
+        android:contentDescription="Acciones rápidas" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

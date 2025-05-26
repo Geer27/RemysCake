@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="6dp"
-                app:cardBackgroundColor="@drawable/gradient_seller_welcome"
+                app:cardBackgroundColor="@android:color/transparent"
                 android:layout_marginBottom="24dp">
 
                 <LinearLayout
@@ -257,7 +257,7 @@
                 android:layout_height="120dp"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="10dp"
-                app:cardBackgroundColor="@drawable/gradient_seller_primary"
+                app:cardBackgroundColor="@android:color/transparent"
                 android:layout_marginBottom="16dp"
                 android:clickable="true"
                 android:focusable="true"
@@ -268,7 +268,8 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="24dp">
+                    android:padding="24dp"
+                    android:background="@drawable/gradient_seller_primary">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="70dp"

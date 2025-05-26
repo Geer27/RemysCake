@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".activities.CrearReservaActivity">
+
+    <!-- Toolbar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageButton
+                android:id="@+id/btnBackCrearReserva"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_arrow_back"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Volver"
+                app:tint="@color/seller_primary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crear Nueva Reserva"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/seller_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pedido personalizado"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnGuardarBorrador"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_save"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Guardar borrador"
+                app:tint="@color/seller_primary" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Contenido principal -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/cvToolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Paso 1: Seleccionar Cliente -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/seller_primary">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:layout_gravity="center" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Seleccionar Cliente"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/seller_primary"
+                            android:layout_marginStart="12dp" />
+
+                    </LinearLayout>
+
+                    <!-- Cliente seleccionado o buscar -->
+                    <LinearLayout
+                        android:id="@+id/llClienteSeleccionado"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/background_selected_client"
+                        android:padding="12dp"
+                        android:visibility="gone"
+                        android:layout_marginBottom="8dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/primary_light">
+
+                            <TextView
+                                android:id="@+id/tvClienteIniciales"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="MG"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary_color"
+                                android:layout_gravity="center" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:id="@+id/tvClienteNombre"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="María García"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary" />
+
+                            <TextView
+                                android:id="@+id/tvClienteTelefono"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="+503 7123-4567"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+
+                        </LinearLayout>
+
+                        <ImageButton
+                            android:id="@+id/btnCambiarCliente"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_edit"
+                            android:background="@drawable/circle_button_background"
+                            android:contentDescription="Cambiar cliente"
+                            app:tint="@color/seller_primary" />
+
+                    </LinearLayout>
+
+                    <!-- Botones de selección de cliente -->
+                    <LinearLayout
+                        android:id="@+id/llSeleccionarCliente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBuscarCliente"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Buscar Cliente"
+                            app:strokeColor="@color/seller_primary"
+                            android:textColor="@color/seller_primary"
+                            app:icon="@drawable/ic_search"
+                            app:iconTint="@color/seller_primary"
+                            android:layout_marginEnd="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnNuevoCliente"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nuevo Cliente"
+                            android:backgroundTint="@color/seller_primary"
+                            android:textColor="@android:color/white"
+                            app:icon="@drawable/ic_person_add"
+                            app:iconTint="@android:color/white"
+                            android:layout_marginStart="8dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Paso 2: Fecha y Hora de Entrega -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/seller_secondary">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="2"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:layout_gravity="center" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fecha y Hora de Entrega"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/seller_secondary"
+                            android:layout_marginStart="12dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilFechaEntrega"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Fecha de entrega"
+                            app:startIconDrawable="@drawable/ic_calendar_today"
+                            app:startIconTint="@color/seller_secondary"
+                            android:layout_marginEnd="8dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etFechaEntrega"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:clickable="true" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilHoraEntrega"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Hora de entrega"
+                            app:startIconDrawable="@drawable/ic_access_time"
+                            app:startIconTint="@color/seller_secondary"
+                            android:layout_marginStart="8dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etHoraEntrega"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:clickable="true" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Paso 3: Seleccionar Productos -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/accent_color">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:layout_gravity="center" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Seleccionar Productos"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/accent_color"
+                            android:layout_marginStart="12dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAgregarProducto"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="Agregar"
+                            android:textColor="@color/accent_color"
+                            app:icon="@drawable/ic_add"
+                            app:iconTint="@color/accent_color" />
+
+                    </LinearLayout>
+
+                    <!-- Lista de productos seleccionados -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvProductosSeleccionados"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/item_producto_seleccionado" />
+
+                    <!-- Mensaje cuando no hay productos -->
+                    <LinearLayout
+                        android:id="@+id/llSinProductos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="24dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_cake"
+                            app:tint="@color/text_tertiary"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No hay productos seleccionados"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_secondary"
+                            android:textAlignment="center" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Toca 'Agregar' para seleccionar productos"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_tertiary"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Paso 4: Notas Especiales -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/info_color">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="4"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:layout_gravity="center" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Notas Especiales (Opcional)"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/info_color"
+                            android:layout_marginStart="12dp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilNotasEspeciales"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Instrucciones especiales para el pedido"
+                        app:startIconDrawable="@drawable/ic_note"
+                        app:startIconTint="@color/info_color">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNotasEspeciales"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:minLines="3"
+                            android:maxLines="5"
+                            android:gravity="top" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Resumen y Total -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Resumen del Pedido"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Subtotal:"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.9" />
+
+                        <TextView
+                            android:id="@+id/tvSubtotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$0.00"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/white"
+                        android:alpha="0.3"
+                        android:layout_marginVertical="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total:"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/tvTotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$0.00"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botón Crear Reserva -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCrearReserva"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Crear Reserva"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/success_color"
+                android:textColor="@android:color/white"
+                app:cornerRadius="28dp"
+                app:icon="@drawable/ic_check"
+                app:iconTint="@android:color/white"
+                android:enabled="false" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

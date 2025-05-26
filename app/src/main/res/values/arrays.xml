@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categorias_productos">
+        <item>Pasteles</item>
+        <item>Cupcakes</item>
+        <item>Postres</item>
+        <item>Galletas</item>
+        <item>Tartas</item>
+        <item>Brownies</item>
+        <item>Muffins</item>
+        <item>Cheesecakes</item>
+        <item>Pies</item>
+        <item>Especiales</item>
+    </string-array>
+</resources>

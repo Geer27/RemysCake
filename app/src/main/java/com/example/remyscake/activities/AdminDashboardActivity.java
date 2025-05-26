@@ -161,33 +161,33 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
         // });
 
         cvGestionarCatalogo.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Gestionar Catálogo", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminDashboardActivity.this, GestionCatalogoActivity.class);
-            // startActivity(intent);
+            //Toast.makeText(this, "Ir a Gestionar Catálogo", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(AdminDashboardActivity.this, GestionarCatalogoActivity.class);
+            startActivity(intent);
         });
 
         cvGestionarUsuarios.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Gestionar Usuarios", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminDashboardActivity.this, GestionUsuariosActivity.class);
-            // startActivity(intent);
+            //Toast.makeText(this, "Ir a Gestionar Usuarios", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(AdminDashboardActivity.this, GestionarUsuariosActivity.class);
+            startActivity(intent);
         });
 
         cvGestionarClientes.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Gestionar Clientes", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminDashboardActivity.this, GestionClientesActivity.class);
-            // startActivity(intent);
+            //Toast.makeText(this, "Ir a Gestionar Clientes", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(AdminDashboardActivity.this, GestionarClientesActivity.class);
+            startActivity(intent);
         });
 
         cvVerReservas.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Ver Reservas", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminDashboardActivity.this, VerReservasActivity.class);
-            // startActivity(intent);
+            //Toast.makeText(this, "Ir a Ver Reservas", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(AdminDashboardActivity.this, VerReservasActivity.class);
+            startActivity(intent);
         });
 
         cvGenerarReportes.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Generar Reportes", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminDashboardActivity.this, GenerarReportesActivity.class);
-            // startActivity(intent);
+            //Toast.makeText(this, "Ir a Generar Reportes", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(AdminDashboardActivity.this, GenerarReportesActivity.class);
+            startActivity(intent);
         });
     }
 

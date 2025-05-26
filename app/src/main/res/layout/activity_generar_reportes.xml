@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".activities.ProductionDashboardActivity">
+    tools:context=".activities.GenerarReportesActivity">
 
-    <!-- Toolbar personalizada -->
+    <!-- Toolbar -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvToolbar"
         android:layout_width="0dp"
@@ -27,21 +27,14 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <androidx.cardview.widget.CardView
+            <ImageButton
+                android:id="@+id/btnBackReportes"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/production_light">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_kitchen"
-                    android:layout_gravity="center"
-                    app:tint="@color/production_primary" />
-
-            </androidx.cardview.widget.CardView>
+                android:src="@drawable/ic_arrow_back"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Volver"
+                app:tint="@color/admin_primary" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -53,46 +46,35 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Centro de Producción"
+                    android:text="Generar Reportes"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/production_primary" />
+                    android:textColor="@color/admin_primary" />
 
                 <TextView
-                    android:id="@+id/tvWelcomeProduction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bienvenido, Chef"
+                    android:text="Análisis y estadísticas"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary" />
 
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/btnRefreshProduction"
+                android:id="@+id/btnHistorialReportes"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/ic_refresh"
+                android:src="@drawable/ic_history"
                 android:background="@drawable/circle_button_background"
-                android:contentDescription="Actualizar"
-                app:tint="@color/production_primary" />
-
-            <ImageButton
-                android:id="@+id/btnLogoutProduction"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_logout"
-                android:background="@drawable/circle_button_background"
-                android:contentDescription="Cerrar Sesión"
-                app:tint="@color/production_primary"
-                android:layout_marginStart="8dp" />
+                android:contentDescription="Historial"
+                app:tint="@color/admin_primary" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <!-- ScrollView para el contenido -->
-    <ScrollView
+    <!-- Contenido principal -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -105,16 +87,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="16dp">
 
-            <!-- Estado de la cocina -->
+            <!-- Resumen rápido -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
+                app:cardCornerRadius="16dp"
                 app:cardElevation="6dp"
-                app:cardBackgroundColor="@android:color/transparent"
-                android:layout_marginBottom="24dp">
+                app:cardBackgroundColor="@drawable/gradient_admin_card"
+                android:layout_marginBottom="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -122,83 +104,40 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Resumen del Mes"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:layout_marginBottom="12dp" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:gravity="center">
 
                             <TextView
+                                android:id="@+id/tvVentasMes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Estado de la Cocina"
+                                android:text="$2,450"
                                 android:textSize="20sp"
                                 android:textStyle="bold"
                                 android:textColor="@android:color/white" />
 
                             <TextView
-                                android:id="@+id/tvKitchenStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="5 pedidos en proceso"
-                                android:textSize="14sp"
-                                android:textColor="@android:color/white"
-                                android:alpha="0.9"
-                                android:layout_marginTop="4dp" />
-
-                        </LinearLayout>
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            app:cardCornerRadius="30dp"
-                            app:cardElevation="2dp"
-                            app:cardBackgroundColor="@android:color/white">
-
-                            <ImageView
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:src="@drawable/ic_schedule"
-                                android:layout_gravity="center"
-                                app:tint="@color/production_primary" />
-
-                        </androidx.cardview.widget.CardView>
-
-                    </LinearLayout>
-
-                    <!-- Estadísticas de producción -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:id="@+id/tvPendingCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="3"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                android:textColor="@android:color/white" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Pendientes"
+                                android:text="Ventas"
                                 android:textSize="12sp"
                                 android:textColor="@android:color/white"
                                 android:alpha="0.8" />
@@ -213,18 +152,18 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/tvInProductionCount"
+                                android:id="@+id/tvPedidosMes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="2"
-                                android:textSize="24sp"
+                                android:text="32"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 android:textColor="@android:color/white" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="En Proceso"
+                                android:text="Pedidos"
                                 android:textSize="12sp"
                                 android:textColor="@android:color/white"
                                 android:alpha="0.8" />
@@ -239,18 +178,18 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/tvReadyCount"
+                                android:id="@+id/tvClientesNuevos"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1"
-                                android:textSize="24sp"
+                                android:text="8"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 android:textColor="@android:color/white" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Listos"
+                                android:text="Clientes Nuevos"
                                 android:textSize="12sp"
                                 android:textColor="@android:color/white"
                                 android:alpha="0.8" />
@@ -263,49 +202,49 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Opciones de trabajo -->
+            <!-- Tipos de reportes -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Centro de Trabajo"
+                android:text="Tipos de Reportes"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/production_primary"
+                android:textColor="@color/admin_primary"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Reservas Pendientes -->
+            <!-- Reporte de Ventas -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cvReservasPendientes"
+                android:id="@+id/cvReporteVentas"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
                 app:cardBackgroundColor="@android:color/white"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        app:cardCornerRadius="30dp"
-                        app:cardElevation="3dp"
-                        app:cardBackgroundColor="@color/production_pending_light">
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/success_light">
 
                         <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_hourglass_empty"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_trending_up"
                             android:layout_gravity="center"
-                            app:tint="@color/production_pending" />
+                            app:tint="@color/success_color" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -319,77 +258,64 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reservas Pendientes"
-                            android:textSize="18sp"
+                            android:text="Reporte de Ventas"
+                            android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/production_pending" />
+                            android:textColor="@color/text_primary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pedidos esperando ser iniciados"
+                            android:text="Ingresos, productos más vendidos, tendencias"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
                             android:layout_marginTop="2dp" />
 
                     </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        app:cardBackgroundColor="@color/production_pending">
-
-                        <TextView
-                            android:id="@+id/tvPendingBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/white"
-                            android:layout_gravity="center" />
-
-                    </androidx.cardview.widget.CardView>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/text_secondary" />
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Reservas en Producción -->
+            <!-- Reporte de Clientes -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cvReservasEnProduccion"
+                android:id="@+id/cvReporteClientes"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
                 app:cardBackgroundColor="@android:color/white"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        app:cardCornerRadius="30dp"
-                        app:cardElevation="3dp"
-                        app:cardBackgroundColor="@color/production_active_light">
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/primary_light">
 
                         <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_local_fire_department"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_people"
                             android:layout_gravity="center"
-                            app:tint="@color/production_active" />
+                            app:tint="@color/primary_color" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -403,77 +329,215 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="En Producción"
-                            android:textSize="18sp"
+                            android:text="Reporte de Clientes"
+                            android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/production_active" />
+                            android:textColor="@color/text_primary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pedidos siendo preparados ahora"
+                            android:text="Clientes frecuentes, nuevos, análisis demográfico"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
                             android:layout_marginTop="2dp" />
 
                     </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        app:cardBackgroundColor="@color/production_active">
-
-                        <TextView
-                            android:id="@+id/tvActiveBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="2"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/white"
-                            android:layout_gravity="center" />
-
-                    </androidx.cardview.widget.CardView>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/text_secondary" />
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Listos para Entrega -->
+            <!-- Reporte de Productos -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cvListosParaEntrega"
+                android:id="@+id/cvReporteProductos"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/transparent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="12dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="20dp"
-                    android:background="@drawable/gradient_production_header">>
+                    android:padding="16dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/admin_light">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_cake"
+                            android:layout_gravity="center"
+                            app:tint="@color/admin_primary" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reporte de Productos"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Productos populares, rentabilidad, inventario"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Reporte de Rendimiento -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvReporteRendimiento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/info_light">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_assessment"
+                            android:layout_gravity="center"
+                            app:tint="@color/info_color" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reporte de Rendimiento"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="KPIs, métricas de equipo, tiempos de producción"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Configuración de reportes -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Configuración"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/admin_primary"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Reporte personalizado -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvReportePersonalizado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@drawable/gradient_admin_secondary"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         app:cardCornerRadius="30dp"
-                        app:cardElevation="3dp"
+                        app:cardElevation="2dp"
                         app:cardBackgroundColor="@android:color/white">
 
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_check_circle"
+                            android:src="@drawable/ic_build"
                             android:layout_gravity="center"
-                            app:tint="@color/production_ready" />
+                            app:tint="@color/admin_secondary" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -487,7 +551,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Listos para Entrega"
+                            android:text="Crear Reporte Personalizado"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white" />
@@ -495,32 +559,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pedidos terminados y empacados"
+                            android:text="Selecciona métricas específicas y rangos de fecha"
                             android:textSize="12sp"
                             android:textColor="@android:color/white"
                             android:alpha="0.9"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
 
                     </LinearLayout>
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        app:cardBackgroundColor="@android:color/white">
-
-                        <TextView
-                            android:id="@+id/tvReadyBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/production_ready"
-                            android:layout_gravity="center" />
-
-                    </androidx.cardview.widget.CardView>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@android:color/white" />
 
                 </LinearLayout>
 
@@ -528,27 +579,19 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Elementos decorativos -->
-    <View
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:background="@drawable/circle_decoration_production"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="-15dp"
-        android:alpha="0.15" />
-
-    <View
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/circle_decoration_production_2"
+    <!-- FAB para generar reporte rápido -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabGenerarReporte"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_assessment"
+        app:backgroundTint="@color/admin_primary"
+        app:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="120dp"
-        android:layout_marginStart="10dp"
-        android:alpha="0.15" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"
+        android:contentDescription="Generar reporte" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

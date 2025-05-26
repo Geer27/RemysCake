@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".activities.AgregarEditarProductoActivity">
+
+    <!-- Toolbar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageButton
+                android:id="@+id/btnBackProducto"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_arrow_back"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Volver"
+                app:tint="@color/admin_primary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tvTituloActividad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Agregar Producto"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/admin_primary" />
+
+                <TextView
+                    android:id="@+id/tvSubtituloActividad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nuevo producto para el catálogo"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnGuardarRapido"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_save"
+                android:background="@drawable/circle_button_background"
+                android:contentDescription="Guardar"
+                app:tint="@color/admin_primary"
+                android:enabled="false" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Contenido principal -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/cvToolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Sección de Imagen -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Imagen del Producto"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/admin_primary"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Contenedor de imagen -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cvImagenProducto"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_horizontal"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/background_light"
+                        android:layout_marginBottom="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <!-- ImageView para la imagen -->
+                            <ImageView
+                                android:id="@+id/ivImagenProducto"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_add_photo_alternate"
+                                app:tint="@color/text_tertiary" />
+
+                            <!-- Overlay para cambiar imagen -->
+                            <LinearLayout
+                                android:id="@+id/llOverlayImagen"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:background="@color/overlay_dark"
+                                android:visibility="gone">
+
+                                <ImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:src="@drawable/ic_camera_alt"
+                                    app:tint="@android:color/white"
+                                    android:layout_marginBottom="8dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Cambiar Imagen"
+                                    android:textSize="12sp"
+                                    android:textColor="@android:color/white"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Indicador de carga -->
+                            <ProgressBar
+                                android:id="@+id/pbCargandoImagen"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:visibility="gone"
+                                android:indeterminateTint="@color/admin_primary" />
+
+                        </FrameLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Botones para seleccionar imagen -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSeleccionarGaleria"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Galería"
+                            android:textSize="12sp"
+                            app:strokeColor="@color/admin_primary"
+                            android:textColor="@color/admin_primary"
+                            app:icon="@drawable/ic_photo_library"
+                            app:iconTint="@color/admin_primary"
+                            android:layout_marginEnd="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnTomarFoto"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cámara"
+                            android:textSize="12sp"
+                            app:strokeColor="@color/admin_primary"
+                            android:textColor="@color/admin_primary"
+                            app:icon="@drawable/ic_camera_alt"
+                            app:iconTint="@color/admin_primary"
+                            android:layout_marginStart="8dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Información Básica -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Información Básica"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/admin_primary"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Nombre del producto -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilNombreProducto"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nombre del producto *"
+                        app:startIconDrawable="@drawable/ic_cake"
+                        app:startIconTint="@color/admin_primary"
+                        app:helperText="Ej: Pastel de Chocolate con Fresas"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="50"
+                        android:layout_marginBottom="16dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNombreProducto"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords"
+                            android:maxLength="50" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Descripción -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDescripcionProducto"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Descripción del producto"
+                        app:startIconDrawable="@drawable/ic_description"
+                        app:startIconTint="@color/admin_primary"
+                        app:helperText="Describe los ingredientes y características"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="200"
+                        android:layout_marginBottom="16dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etDescripcionProducto"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:minLines="3"
+                            android:maxLines="5"
+                            android:maxLength="200"
+                            android:gravity="top" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Categoría -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilCategoriaProducto"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Categoría *"
+                        app:startIconDrawable="@drawable/ic_category"
+                        app:startIconTint="@color/admin_primary"
+                        android:layout_marginBottom="16dp">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/actvCategoriaProducto"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:focusable="false"
+                            android:clickable="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Precios y Disponibilidad -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Precios y Disponibilidad"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/admin_primary"
+                        android:layout_marginBottom="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <!-- Precio base -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilPrecioProducto"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Precio base *"
+                            app:startIconDrawable="@drawable/ic_attach_money"
+                            app:startIconTint="@color/success_color"
+                            app:prefixText="$"
+                            app:suffixText="USD"
+                            app:helperText="Precio sin personalizaciones"
+                            android:layout_marginEnd="8dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPrecioProducto"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal"
+                                android:maxLength="8" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </LinearLayout>
+
+                    <!-- Disponibilidad -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/background_availability_toggle"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Producto Disponible"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Los clientes pueden pedirlo"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/swDisponibilidadProducto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:thumbTint="@color/success_color"
+                            android:trackTint="@color/success_light" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Información Adicional -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Información Adicional"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/admin_primary"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Ingredientes especiales -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilIngredientesEspeciales"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Ingredientes especiales"
+                        app:startIconDrawable="@drawable/ic_eco"
+                        app:startIconTint="@color/admin_primary"
+                        app:helperText="Ej: Sin gluten, vegano, orgánico"
+                        android:layout_marginBottom="16dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIngredientesEspeciales"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Notas internas -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilNotasInternas"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Notas internas"
+                        app:startIconDrawable="@drawable/ic_note"
+                        app:startIconTint="@color/admin_primary"
+                        app:helperText="Solo visible para el equipo"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="150">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNotasInternas"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:minLines="2"
+                            android:maxLines="4"
+                            android:maxLength="150"
+                            android:gravity="top" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botones de acción -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelarProducto"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="Cancelar"
+                    android:textSize="16sp"
+                    app:strokeColor="@color/text_secondary"
+                    android:textColor="@color/text_secondary"
+                    app:cornerRadius="28dp"
+                    android:layout_marginEnd="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGuardarProducto"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="2"
+                    android:text="Guardar Producto"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/admin_primary"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="28dp"
+                    app:icon="@drawable/ic_save"
+                    app:iconTint="@android:color/white"
+                    android:layout_marginStart="8dp"
+                    android:enabled="false" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Progress overlay -->
+    <FrameLayout
+        android:id="@+id/progressOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay_dark"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="32dp">
+
+                <ProgressBar
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:indeterminateTint="@color/admin_primary"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/tvProgressMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardando producto..."
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@android:color/white"
+    android:layout_marginBottom="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <CheckBox
+            android:id="@+id/cbSeleccionarProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/seller_primary" />
+
+        <ImageView
+            android:id="@+id/ivProductoImagenDisponible"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_cake"
+            android:background="@drawable/circle_button_background"
+            app:tint="@color/accent_color"
+            android:layout_marginStart="8dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/tvProductoNombreDisponible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pastel de Chocolate"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/tvProductoDescripcionDisponible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delicioso pastel con cobertura de chocolate"
+                android:textSize="11sp"
+                android:textColor="@color/text_secondary"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvProductoPrecioDisponible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$25.00"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/success_color" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

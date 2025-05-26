@@ -14,16 +14,41 @@
         android:theme="@style/Theme.RemysCake"
         tools:targetApi="31">
         <activity
+            android:name=".activities.AgregarEditarProductoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ReservasProduccionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MisReservasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CrearReservaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GenerarReportesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.VerReservasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GestionarClientesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GestionarUsuariosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GestionarCatalogoActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.PortadaActivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.ProductionDashboardActivity"
             android:exported="false" />
@@ -41,9 +66,18 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true" />
 
-        </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 
 </manifest>
