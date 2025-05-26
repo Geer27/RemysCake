@@ -10,4 +10,5 @@ public class ConstantesApp {
     public static final String NODO_CATALOGO_PASTELES = "catalogo_pasteles";
     public static final String NODO_CLIENTES = "clientes";
     public static final String NODO_RESERVACIONES = "reservaciones";
+    public static final String NODO_CATEGORIAS_CATALOGO = "categorias_catalogo";
 }

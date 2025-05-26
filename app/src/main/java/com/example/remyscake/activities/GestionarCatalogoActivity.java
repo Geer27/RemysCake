@@ -9,20 +9,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.example.remyscake.R;
+import com.example.remyscake.R;        // Asegúrate que este sea tu R
 import com.example.remyscake.adapters.CatalogoAdapter;
+import com.example.remyscake.models.Categoria; // Importa el modelo Categoria
 import com.example.remyscake.models.Pastel;
 import com.example.remyscake.utils.ConstantesApp;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,28 +36,30 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet; // Para categorías únicas
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;    // Para categorías únicas
+import java.util.Set;
 
-public class GestionarCatalogoActivity extends AppCompatActivity implements CatalogoAdapter.OnItemClickListener { // Implementa la interfaz
+public class GestionarCatalogoActivity extends AppCompatActivity implements CatalogoAdapter.OnItemClickListener {
 
     private static final String ETIQUETA_DEBUG = "GestionCatalogo";
 
-    private ImageButton btnBackCatalogo, btnSearchCatalogo;
-    private TextView tvTotalProductos, tvTotalCategorias;
+    private ImageButton btnBackCatalogo, btnSearchCatalogo, btnAdministrarCategorias; // btnAdministrarCategorias añadido
+    private TextView tvTotalProductos, tvTotalCategorias, tvSinProductos; // tvSinProductos añadido
     private CardView cvAgregarProductoCardView;
     private ChipGroup chipGroupCategorias;
     private RecyclerView rvProductos;
     private FloatingActionButton fabAgregarProducto;
 
-    private CatalogoAdapter catalogoAdapter;            // DESCOMENTADO
-    private List<Pastel> listaTodosLosProductos = new ArrayList<>(); // DESCOMENTADO
-    private List<Pastel> listaProductosFiltrados = new ArrayList<>();// DESCOMENTADO
-    private List<String> listaCategorias = new ArrayList<>();     // DESCOMENTADO
+    private CatalogoAdapter catalogoAdapter;
+    private List<Pastel> listaTodosLosProductos = new ArrayList<>();
+    private List<Pastel> listaProductosFiltrados = new ArrayList<>();
+    private List<String> nombresCategoriasParaChips = new ArrayList<>(); // Usaremos solo nombres para los chips
 
     private DatabaseReference referenciaCatalogoBD;
+    private DatabaseReference referenciaCategoriasBD; // Referencia para categorías
     private ValueEventListener listenerCatalogo;
+    private ValueEventListener listenerCategorias;
 
 
     @Override
@@ -62,38 +68,42 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
         setContentView(R.layout.activity_gestionar_catalogo);
 
         referenciaCatalogoBD = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_CATALOGO_PASTELES);
+        referenciaCategoriasBD = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_CATEGORIAS_CATALOGO);
 
         inicializarVistas();
-        configurarRecyclerView(); // Ahora se configurará completamente
+        configurarRecyclerView();
         establecerListeners();
-        // cargarDatosCatalogo() se llamará en onResume o después de configurar listeners si es necesario
+        // La carga de datos se iniciará desde onResume -> cargarCategoriasParaChips -> cargarDatosCatalogo
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        cargarDatosCatalogo(); // Cargar o recargar datos cuando la actividad se vuelve visible
+        cargarCategoriasParaChips(); // Cargar primero las categorías para los filtros
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Eliminar el listener cuando la actividad no está visible para ahorrar recursos
         if (referenciaCatalogoBD != null && listenerCatalogo != null) {
             referenciaCatalogoBD.removeEventListener(listenerCatalogo);
         }
+        if (referenciaCategoriasBD != null && listenerCategorias != null) {
+            referenciaCategoriasBD.removeEventListener(listenerCategorias);
+        }
     }
-
 
     private void inicializarVistas() {
         btnBackCatalogo = findViewById(R.id.btnBackCatalogo);
         btnSearchCatalogo = findViewById(R.id.btnSearchCatalogo);
+        btnAdministrarCategorias = findViewById(R.id.btnAdministrarCategorias); // Vinculación del nuevo botón
         tvTotalProductos = findViewById(R.id.tvTotalProductos);
         tvTotalCategorias = findViewById(R.id.tvTotalCategorias);
         cvAgregarProductoCardView = findViewById(R.id.cvAgregarProducto);
         chipGroupCategorias = findViewById(R.id.chipGroupCategorias);
         rvProductos = findViewById(R.id.rvProductos);
         fabAgregarProducto = findViewById(R.id.fabAgregarProducto);
+        tvSinProductos = findViewById(R.id.tvSinProductos); // Vinculación del TextView
 
         tvTotalProductos.setText("0");
         tvTotalCategorias.setText("0");
@@ -101,8 +111,8 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
 
     private void configurarRecyclerView() {
         rvProductos.setLayoutManager(new LinearLayoutManager(this));
-        listaProductosFiltrados = new ArrayList<>(); // Asegura que la lista no sea nula
-        catalogoAdapter = new CatalogoAdapter(listaProductosFiltrados, this, this); // Pasando el listener
+        listaProductosFiltrados = new ArrayList<>();
+        catalogoAdapter = new CatalogoAdapter(listaProductosFiltrados, this, this);
         rvProductos.setAdapter(catalogoAdapter);
     }
 
@@ -113,6 +123,12 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
             Toast.makeText(this, "Funcionalidad de Búsqueda (Próximamente)", Toast.LENGTH_SHORT).show();
         });
 
+        btnAdministrarCategorias.setOnClickListener(v -> {
+            // Aquí podrías mostrar un diálogo con opciones "Agregar Categoría", "Ver/Editar Categorías"
+            // Por ahora, solo abriremos el diálogo para agregar una nueva.
+            mostrarDialogoAgregarEditarCategoria(null, null); // null para agregar nueva
+        });
+
         View.OnClickListener listenerIrAAgregarProducto = v -> {
             Intent intent = new Intent(GestionarCatalogoActivity.this, AgregarEditarProductoActivity.class);
             startActivity(intent);
@@ -121,123 +137,167 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
         fabAgregarProducto.setOnClickListener(listenerIrAAgregarProducto);
 
         chipGroupCategorias.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds.isEmpty()) {
-                // Si es posible deseleccionar todos (singleSelection="false"), mostrar todos
+            if (checkedIds.isEmpty() || checkedIds.get(0) == View.NO_ID) {
                 filtrarProductosPorCategoria("Todos");
             } else {
-                // Asumiendo singleSelection="true" o tomamos el primer ID si hay varios
                 Chip chipSeleccionado = findViewById(checkedIds.get(0));
                 if (chipSeleccionado != null) {
                     filtrarProductosPorCategoria(chipSeleccionado.getText().toString());
-                } else { // Si el ID no corresponde a un chip (raro, pero por si acaso)
+                } else {
                     filtrarProductosPorCategoria("Todos");
                 }
             }
         });
     }
 
-    private void cargarDatosCatalogo() {
-        Toast.makeText(this, "Cargando catálogo...", Toast.LENGTH_SHORT).show();
-        if (listenerCatalogo != null) { // Remover listener anterior si existe para evitar duplicados
-            referenciaCatalogoBD.removeEventListener(listenerCatalogo);
+    private void cargarCategoriasParaChips() {
+        if (listenerCategorias != null) {
+            referenciaCategoriasBD.removeEventListener(listenerCategorias);
         }
-
-        listenerCatalogo = new ValueEventListener() {
+        listenerCategorias = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listaTodosLosProductos.clear();
-                Set<String> categoriasUnicas = new HashSet<>(); // Usar Set para evitar duplicados
+                nombresCategoriasParaChips.clear();
+                nombresCategoriasParaChips.add("Todos");
 
                 if (dataSnapshot.exists()) {
-                    for (DataSnapshot productoSnapshot : dataSnapshot.getChildren()) {
-                        Pastel pastel = productoSnapshot.getValue(Pastel.class);
-                        if (pastel != null) {
-                            pastel.setId(productoSnapshot.getKey()); // Guardar el ID de Firebase
-                            listaTodosLosProductos.add(pastel);
-
-                            if (pastel.getCategoria() != null && !pastel.getCategoria().isEmpty()) {
-                                categoriasUnicas.add(pastel.getCategoria());
-                            }
+                    for (DataSnapshot catSnapshot : dataSnapshot.getChildren()) {
+                        Categoria categoria = catSnapshot.getValue(Categoria.class);
+                        if (categoria != null && categoria.getNombre() != null && !categoria.getNombre().isEmpty()) {
+                            nombresCategoriasParaChips.add(categoria.getNombre());
                         }
                     }
                 }
-
-                // Convertir Set a List y ordenar para los chips
-                listaCategorias.clear();
-                listaCategorias.add("Todos"); // Opción por defecto
-                List<String> sortedCategorias = new ArrayList<>(categoriasUnicas);
-                Collections.sort(sortedCategorias); // Ordenar alfabéticamente
-                listaCategorias.addAll(sortedCategorias);
-
-
-                tvTotalProductos.setText(String.valueOf(listaTodosLosProductos.size()));
-                tvTotalCategorias.setText(String.valueOf(categoriasUnicas.size())); // Conteo real de categorías
-
-                actualizarChipsCategorias();
-
-                // Aplicar filtro inicial (ej. "Todos" o el primer chip seleccionado si ya hay uno)
-                int checkedChipId = chipGroupCategorias.getCheckedChipId();
-                if (checkedChipId != View.NO_ID) {
-                    Chip chipInicial = findViewById(checkedChipId);
-                    if (chipInicial != null) {
-                        filtrarProductosPorCategoria(chipInicial.getText().toString());
-                    } else {
-                        filtrarProductosPorCategoria("Todos"); // Fallback
-                    }
-                } else {
-                    // Si no hay nada chequeado, seleccionar y filtrar por "Todos"
-                    if (!listaCategorias.isEmpty() && chipGroupCategorias.getChildCount() > 0) {
-                        Chip primerChip = (Chip) chipGroupCategorias.getChildAt(0); // Asumir que "Todos" es el primero
-                        if (primerChip != null && primerChip.getText().toString().equals("Todos")) {
-                            primerChip.setChecked(true); // Esto debería disparar el listener y filtrar
-                        } else {
-                            filtrarProductosPorCategoria("Todos");
-                        }
-                    } else {
-                        filtrarProductosPorCategoria("Todos");
-                    }
+                // Eliminar duplicados si los hubiera (aunque el Set lo haría mejor)
+                // y ordenar (excepto "Todos")
+                if (nombresCategoriasParaChips.size() > 1) {
+                    Set<String> setUnico = new HashSet<>(nombresCategoriasParaChips.subList(1, nombresCategoriasParaChips.size()));
+                    List<String> tempSort = new ArrayList<>(setUnico);
+                    Collections.sort(tempSort);
+                    nombresCategoriasParaChips = new ArrayList<>();
+                    nombresCategoriasParaChips.add("Todos");
+                    nombresCategoriasParaChips.addAll(tempSort);
                 }
 
-                if (listaTodosLosProductos.isEmpty()) {
-                    Toast.makeText(GestionarCatalogoActivity.this, "El catálogo está vacío.", Toast.LENGTH_LONG).show();
-                }
+
+                actualizarChipsCategoriasUI();
+                tvTotalCategorias.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                cargarDatosCatalogo(); // Cargar productos después de tener las categorías para los filtros
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(ETIQUETA_DEBUG, "Error al cargar catálogo: ", databaseError.toException());
-                Toast.makeText(GestionarCatalogoActivity.this, "Error al cargar datos.", Toast.LENGTH_LONG).show();
-                tvTotalProductos.setText("-");
-                tvTotalCategorias.setText("-");
+                Log.e(ETIQUETA_DEBUG, "Error al cargar categorías: ", databaseError.toException());
+                actualizarChipsCategoriasUI(); // Intentar mostrar "Todos" al menos
+                cargarDatosCatalogo();
             }
         };
-        // Usar addListenerForSingleValueEvent si solo quieres cargar una vez al entrar
-        // o addValueEventListener para actualizaciones en tiempo real.
-        // Para un catálogo, single event suele ser suficiente a menos que esperes cambios frecuentes de otros admins.
-        referenciaCatalogoBD.addListenerForSingleValueEvent(listenerCatalogo);
+        referenciaCategoriasBD.addValueEventListener(listenerCategorias);
     }
 
-    private void actualizarChipsCategorias() {
-        chipGroupCategorias.removeAllViews(); // Limpiar chips anteriores
+    private void actualizarChipsCategoriasUI() {
+        String categoriaSeleccionadaPreviamente = null;
+        int checkedChipId = chipGroupCategorias.getCheckedChipId();
+        if(checkedChipId != View.NO_ID){
+            Chip chipActualmenteSeleccionado = findViewById(checkedChipId);
+            if(chipActualmenteSeleccionado != null){
+                categoriaSeleccionadaPreviamente = chipActualmenteSeleccionado.getText().toString();
+            }
+        }
 
-        for (String categoria : listaCategorias) {
-            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip_filtro_item, chipGroupCategorias, false); // Necesitas un layout para el chip
-            // O crear programáticamente:
-            // Chip chip = new Chip(this);
-            chip.setText(categoria);
-            // chip.setCheckable(true); // Ya está en el estilo de chip_filtro_item
-            // chip.setClickable(true); // Ya está en el estilo de chip_filtro_item
+        chipGroupCategorias.removeAllViews();
+        boolean algunaRestaurada = false;
 
-            // Si "Todos" es el primer chip y no hay selección previa, marcarlo
-            if (categoria.equals("Todos") && chipGroupCategorias.getCheckedChipId() == View.NO_ID) {
+        for (String nombreCategoria : nombresCategoriasParaChips) {
+            Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip_filtro_item, chipGroupCategorias, false);
+            chip.setText(nombreCategoria);
+            // El listener de checked state del group se encargará
+            // chip.setOnClickListener(v -> chipGroupCategorias.check(chip.getId())); // No es necesario si el listener del grupo funciona bien
+
+            if (nombreCategoria.equals(categoriaSeleccionadaPreviamente)) {
                 chip.setChecked(true);
+                algunaRestaurada = true;
             }
             chipGroupCategorias.addView(chip);
         }
-        chipGroupCategorias.setVisibility(listaCategorias.size() > 1 ? View.VISIBLE : View.GONE); // Ocultar si solo está "Todos"
+
+        if (!algunaRestaurada && chipGroupCategorias.getChildCount() > 0) {
+            View primerChipView = chipGroupCategorias.getChildAt(0);
+            if (primerChipView instanceof Chip) {
+                Chip primerChip = (Chip) primerChipView;
+                if (primerChip.getText().toString().equals("Todos")) {
+                    chipGroupCategorias.check(primerChip.getId()); // Dispara el listener del grupo
+                }
+            }
+        } else if (algunaRestaurada) {
+            // Si se restauró una selección, forzar el filtrado inicial con esa selección
+            filtrarProductosPorCategoria(categoriaSeleccionadaPreviamente);
+        }
+
+
+        chipGroupCategorias.setVisibility(nombresCategoriasParaChips.size() > 0 ? View.VISIBLE : View.GONE);
     }
 
+
+    private void cargarDatosCatalogo() {
+        if (listenerCatalogo != null) {
+            referenciaCatalogoBD.removeEventListener(listenerCatalogo);
+        }
+        listenerCatalogo = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listaTodosLosProductos.clear();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot productoSnapshot : dataSnapshot.getChildren()) {
+                        Pastel pastel = productoSnapshot.getValue(Pastel.class);
+                        if (pastel != null) {
+                            pastel.setId(productoSnapshot.getKey());
+                            listaTodosLosProductos.add(pastel);
+                        }
+                    }
+                }
+                tvTotalProductos.setText(String.valueOf(listaTodosLosProductos.size()));
+
+                int checkedChipId = chipGroupCategorias.getCheckedChipId();
+                String categoriaAFiltrar = "Todos";
+                if (checkedChipId != View.NO_ID) {
+                    Chip chipActual = findViewById(checkedChipId);
+                    if (chipActual != null) {
+                        categoriaAFiltrar = chipActual.getText().toString();
+                    }
+                }
+                filtrarProductosPorCategoria(categoriaAFiltrar);
+
+                if (listaTodosLosProductos.isEmpty() && chipGroupCategorias.getCheckedChipId() == View.NO_ID) {
+                    // Este caso es cuando no hay productos y "Todos" está implícitamente seleccionado (o no hay chips)
+                    tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
+                    tvSinProductos.setVisibility(View.VISIBLE);
+                    rvProductos.setVisibility(View.GONE);
+                } else if (listaTodosLosProductos.isEmpty()){
+                    // Si hay filtros pero la lista general está vacía
+                    tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
+                    tvSinProductos.setVisibility(View.VISIBLE);
+                    rvProductos.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(ETIQUETA_DEBUG, "Error al cargar catálogo: ", databaseError.toException());
+                Toast.makeText(GestionarCatalogoActivity.this, "Error al cargar productos.", Toast.LENGTH_SHORT).show();
+                tvTotalProductos.setText("-");
+                listaProductosFiltrados.clear();
+                if(catalogoAdapter != null) catalogoAdapter.actualizarLista(listaProductosFiltrados);
+                tvSinProductos.setText("Error al cargar productos.");
+                tvSinProductos.setVisibility(View.VISIBLE);
+                rvProductos.setVisibility(View.GONE);
+            }
+        };
+        referenciaCatalogoBD.addValueEventListener(listenerCatalogo);
+    }
+
+
     private void filtrarProductosPorCategoria(String categoria) {
+        Log.d(ETIQUETA_DEBUG, "Filtrando por: " + categoria);
         listaProductosFiltrados.clear();
         if (categoria == null || categoria.equalsIgnoreCase("Todos")) {
             listaProductosFiltrados.addAll(listaTodosLosProductos);
@@ -248,35 +308,99 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
                 }
             }
         }
-
-        // Opcional: Ordenar listaProductosFiltrados si se desea
-        // Collections.sort(listaProductosFiltrados, Comparator.comparing(Pastel::getNombre));
+        Collections.sort(listaProductosFiltrados, Comparator.comparing(Pastel::getNombre));
 
         if (catalogoAdapter != null) {
-            catalogoAdapter.actualizarLista(listaProductosFiltrados); // Usa el método del adaptador
-        } else {
-            Log.w(ETIQUETA_DEBUG, "El adaptador del catálogo es nulo al intentar filtrar.");
+            catalogoAdapter.actualizarLista(listaProductosFiltrados);
         }
 
-        // Actualizar UI si la lista filtrada está vacía
-        if (listaProductosFiltrados.isEmpty() && !categoria.equalsIgnoreCase("Todos")) {
-            Toast.makeText(this, "No hay productos en la categoría: " + categoria, Toast.LENGTH_SHORT).show();
-            // rvProductos.setVisibility(View.GONE);
-            // Podrías mostrar un TextView indicando que no hay productos.
-        } else if (listaProductosFiltrados.isEmpty() && categoria.equalsIgnoreCase("Todos") && !listaTodosLosProductos.isEmpty()){
-            // Esto no debería pasar si "Todos" muestra listaTodosLosProductos
-        }
-        else {
-            // rvProductos.setVisibility(View.VISIBLE);
+        if (listaProductosFiltrados.isEmpty()) {
+            rvProductos.setVisibility(View.GONE);
+            tvSinProductos.setVisibility(View.VISIBLE);
+            if (categoria.equalsIgnoreCase("Todos") && listaTodosLosProductos.isEmpty()) {
+                tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
+            } else if (categoria.equalsIgnoreCase("Todos") && !listaTodosLosProductos.isEmpty()){
+                // No debería llegar aquí si "Todos" muestra todos los productos y la lista general no está vacía.
+                // Pero si llega, significa que listaTodosLosProductos está vacía.
+                tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
+            }
+            else {
+                tvSinProductos.setText("No hay productos en la categoría: " + categoria);
+            }
+        } else {
+            rvProductos.setVisibility(View.VISIBLE);
+            tvSinProductos.setVisibility(View.GONE);
         }
     }
 
-    // Implementación de la interfaz del adaptador
+    private void mostrarDialogoAgregarEditarCategoria(String idCategoriaExistente, Categoria categoriaExistente) {
+        MaterialAlertDialogBuilder dialogo = new MaterialAlertDialogBuilder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View vistaDialogo = inflater.inflate(R.layout.dialog_agregar_editar_categoria, null);
+        dialogo.setView(vistaDialogo);
+
+        TextInputEditText etNombreCat = vistaDialogo.findViewById(R.id.etNombreCategoriaDialog);
+        TextInputEditText etDescCat = vistaDialogo.findViewById(R.id.etDescCategoriaDialog);
+
+        if (categoriaExistente != null) {
+            dialogo.setTitle("Editar Categoría"); // Implementar lógica de edición si es necesario
+            etNombreCat.setText(categoriaExistente.getNombre());
+            etDescCat.setText(categoriaExistente.getDescripcion());
+            Toast.makeText(this, "Funcionalidad de Editar Categoría (Próximamente)", Toast.LENGTH_SHORT).show();
+            // Por ahora, el diálogo solo agrega. Para editar, necesitarías pasar el ID y actualizar.
+        } else {
+            dialogo.setTitle("Agregar Nueva Categoría");
+        }
+
+        dialogo.setPositiveButton(categoriaExistente != null ? "Actualizar" : "Agregar", (d, which) -> {
+            String nombre = etNombreCat.getText().toString().trim();
+            String desc = etDescCat.getText().toString().trim();
+
+            if (TextUtils.isEmpty(nombre)) {
+                Toast.makeText(this, "El nombre de la categoría es requerido.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Verificar si la categoría ya existe (opcional pero recomendado)
+            if (nombresCategoriasParaChips.contains(nombre) && idCategoriaExistente == null) { // Solo para nuevas
+                Toast.makeText(this, "La categoría '" + nombre + "' ya existe.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            DatabaseReference refParaGuardar;
+            String idFinalCategoria;
+
+            if (idCategoriaExistente != null) { // Lógica de edición
+                // idFinalCategoria = idCategoriaExistente;
+                // refParaGuardar = referenciaCategoriasBD.child(idFinalCategoria);
+                Toast.makeText(this, "Edición de categoría no implementada en este diálogo.", Toast.LENGTH_SHORT).show();
+                return; // Salir si es intento de edición no soportado por este simple diálogo
+            } else { // Lógica de agregar
+                idFinalCategoria = referenciaCategoriasBD.push().getKey();
+                if (idFinalCategoria == null) {
+                    Toast.makeText(this, "Error al generar ID para categoría.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                refParaGuardar = referenciaCategoriasBD.child(idFinalCategoria);
+            }
+
+            Categoria nuevaCategoria = new Categoria(nombre, desc);
+            refParaGuardar.setValue(nuevaCategoria)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Categoría '" + nombre + "' agregada.", Toast.LENGTH_SHORT).show();
+                        // No es necesario llamar a cargarCategoriasParaChips() aquí si usas addValueEventListener
+                        // El listener se disparará automáticamente y actualizará los chips.
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
+        dialogo.setNegativeButton("Cancelar", (d, which) -> d.dismiss());
+        dialogo.show();
+    }
+
+
     @Override
     public void onItemClick(Pastel pastel) {
-        // Podrías abrir una vista de detalle del producto o directamente editar
-        Toast.makeText(this, "Ver detalle de: " + pastel.getNombre(), Toast.LENGTH_SHORT).show();
-        onEditClick(pastel); // O llamar a editar directamente
+        onEditClick(pastel);
     }
 
     @Override
@@ -285,14 +409,4 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
         intent.putExtra("ID_PRODUCTO", pastel.getId());
         startActivity(intent);
     }
-
-    // No es necesario onDestroy() si usas addListenerForSingleValueEvent.
-    // Si cambias a addValueEventListener, descomenta onDestroy() o usa onPause()/onResume().
-    // @Override
-    // protected void onDestroy() {
-    //    super.onDestroy();
-    //    if (referenciaCatalogoBD != null && listenerCatalogo != null) {
-    //        referenciaCatalogoBD.removeEventListener(listenerCatalogo);
-    //    }
-    // }
 }
