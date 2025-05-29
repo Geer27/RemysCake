@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorOnSurface">
+
+    <!-- Shield/Panel base -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1Z"/>
+
+    <!-- Settings gear in center -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M15.9,10.5c0,0.3 -0.05,0.6 -0.1,0.9l2,1.27c0.18,0.14 0.23,0.41 0.12,0.61l-1.92,3.32c-0.12,0.22 -0.37,0.29 -0.59,0.22l-2.39,-0.96c-0.5,0.38 -1.03,0.7 -1.62,0.94L11.25,18.34c-0.03,0.24 -0.24,0.41 -0.48,0.41H7.23c-0.24,0 -0.44,-0.17 -0.47,-0.41L6.6,16.8c-0.59,-0.24 -1.13,-0.56 -1.62,-0.94l-2.39,0.96c-0.22,0.08 -0.47,0 -0.59,-0.22L0.08,13.28c-0.12,-0.22 -0.07,-0.47 0.12,-0.61L2.2,11.4c-0.05,-0.3 -0.1,-0.6 -0.1,-0.9s0.05,-0.6 0.1,-0.9L0.2,8.33c-0.18,-0.14 -0.23,-0.41 -0.12,-0.61L2,4.4c0.12,-0.22 0.37,-0.29 0.59,-0.22L4.98,5.14c0.5,-0.38 1.03,-0.7 1.62,-0.94L6.76,2.66c0.03,-0.24 0.24,-0.41 0.48,-0.41h3.84c0.24,0 0.44,0.17 0.47,0.41L11.71,4.2c0.59,0.24 1.13,0.56 1.62,0.94l2.39,-0.96c0.22,-0.08 0.47,0 0.59,0.22l1.92,3.32c0.12,0.22 0.07,0.47 -0.12,0.61L15.8,9.6C15.85,9.9 15.9,10.2 15.9,10.5zM9,13c1.38,0 2.5,-1.12 2.5,-2.5S10.38,8 9,8S6.5,9.12 6.5,10.5S7.62,13 9,13z"
+        android:translateX="3"
+        android:translateY="1.5"
+        android:scaleX="0.8"
+        android:scaleY="0.8"/>
+
+    <!-- Admin crown/indicator -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M5,16L6.5,10.5L9,13L12,8L15,13L17.5,10.5L19,16H5Z"
+        android:translateY="-3"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="2"/>
+</vector>

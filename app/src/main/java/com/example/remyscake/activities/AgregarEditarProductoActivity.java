@@ -8,7 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat; // Para getColor
 import androidx.core.content.FileProvider;
-
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog; // Para el diálogo de salida
@@ -25,7 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button; // Usaremos MaterialButton pero el tipo base es Button
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -55,7 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays; // Para Arrays.asList
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ import java.util.UUID;
 public class AgregarEditarProductoActivity extends AppCompatActivity {
 
     private static final String ETIQUETA_DEBUG = "AddEditProducto";
-    // Códigos de solicitud de permiso (no se usan con ActivityResultLauncher directamente, pero son buenas prácticas tenerlos)
+    // Códigos de solicitud de permiso
     // private static final int CODIGO_PERMISO_CAMARA = 101;
     // private static final int CODIGO_PERMISO_ALMACENAMIENTO = 102;
 
@@ -94,7 +95,7 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
     private String idProductoExistente = null;
     private Pastel pastelExistente = null;
     private Uri uriImagenSeleccionada = null;
-    private String urlImagenSubidaOriginal = null; // Para saber si la imagen realmente cambió
+    private String urlImagenSubidaOriginal = null;
     private String urlImagenParaGuardar = null; // URL final de la imagen a guardar en DB
     private boolean hayCambiosSinGuardar = false;
     private String rutaFotoCamara;
@@ -171,12 +172,15 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
                 new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
+                        Log.d(ETIQUETA_DEBUG, "Imagen seleccionada de galería: " + uri.toString());
                         uriImagenSeleccionada = uri;
-                        urlImagenParaGuardar = null; // Indicar que la imagen es nueva y necesita subirse
-                        Glide.with(this).load(uri).centerCrop().into(ivImagenProducto);
-                        ivImagenProducto.clearColorFilter(); // Quitar tint si lo tenía el placeholder
+                        urlImagenParaGuardar = null;
+                        Glide.with(this).load(uri).centerCrop().placeholder(R.drawable.ic_cake).into(ivImagenProducto);
+                        ivImagenProducto.clearColorFilter();
                         llOverlayImagen.setVisibility(View.VISIBLE);
                         marcarCambios();
+                    } else {
+                        Log.d(ETIQUETA_DEBUG, "No se seleccionó imagen de galería.");
                     }
                 });
 
@@ -198,23 +202,27 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
         solicitadorPermisosMultiplesLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 permissions -> {
-                    boolean camaraPermitida = permissions.getOrDefault(Manifest.permission.CAMERA, false);
-                    boolean lecturaPermitida = permissions.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false);
-                    // En Android < Q, WRITE_EXTERNAL_STORAGE también es necesario para la cámara
-                    boolean escrituraPermitida = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q ?
+                    boolean camaraConcedida = permissions.getOrDefault(Manifest.permission.CAMERA, false);
+                    boolean lecturaAlmacenamientoConcedida = permissions.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false);
+                    boolean escrituraAlmacenamientoConcedida = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q ?
                             permissions.getOrDefault(Manifest.permission.WRITE_EXTERNAL_STORAGE, false) : true;
 
-                    if (permissions.containsKey(Manifest.permission.CAMERA)) { // Si se pidió permiso de cámara
-                        if (camaraPermitida && escrituraPermitida) {
+                    // Determinar qué acción se intentaba basándose en qué permisos se pidieron.
+                    if (permissions.containsKey(Manifest.permission.CAMERA)) {
+                        if (camaraConcedida && escrituraAlmacenamientoConcedida) {
+                            Log.d(ETIQUETA_DEBUG, "Permisos de cámara concedidos por el launcher. Abriendo cámara.");
                             abrirCamara();
                         } else {
-                            Toast.makeText(this, "Permiso de cámara o escritura denegado.", Toast.LENGTH_SHORT).show();
+                            Log.d(ETIQUETA_DEBUG, "Permisos de cámara denegados por el launcher.");
+                            Toast.makeText(this, "Permiso de cámara o escritura denegado.", Toast.LENGTH_LONG).show();
                         }
-                    } else if (permissions.containsKey(Manifest.permission.READ_EXTERNAL_STORAGE)) { // Si se pidió permiso de galería
-                        if (lecturaPermitida) {
+                    } else if (permissions.containsKey(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        if (lecturaAlmacenamientoConcedida) {
+                            Log.d(ETIQUETA_DEBUG, "Permiso de lectura de almacenamiento concedido por el launcher. Abriendo galería.");
                             selectorGaleriaLauncher.launch("image/*");
                         } else {
-                            Toast.makeText(this, "Permiso de almacenamiento denegado.", Toast.LENGTH_SHORT).show();
+                            Log.d(ETIQUETA_DEBUG, "Permiso de lectura de almacenamiento denegado por el launcher.");
+                            Toast.makeText(this, "Permiso de almacenamiento denegado.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -228,18 +236,22 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
         btnCancelarProducto.setOnClickListener(v -> manejarSalida());
 
         View.OnClickListener listenerSeleccionImagen = v -> {
-            // Mostrar un diálogo para elegir entre cámara o galería
             new AlertDialog.Builder(this)
                     .setTitle("Seleccionar Imagen")
                     .setItems(new CharSequence[]{"Abrir Galería", "Tomar Foto"}, (dialog, which) -> {
                         if (which == 0) { // Galería
-                            solicitarPermisoAlmacenamiento();
+                            solicitarPermisoAlmacenamientoParaGaleria(); // MÉTODO PARA GALERÍA
                         } else { // Cámara
                             solicitarPermisoCamara();
                         }
                     })
                     .show();
         };
+        cvImagenProducto.setOnClickListener(listenerSeleccionImagen);
+        if(llOverlayImagen != null) llOverlayImagen.setOnClickListener(listenerSeleccionImagen);
+
+        btnSeleccionarGaleria.setOnClickListener(v -> solicitarPermisoAlmacenamientoParaGaleria());
+        btnTomarFoto.setOnClickListener(v -> solicitarPermisoCamara());
         cvImagenProducto.setOnClickListener(listenerSeleccionImagen);
         llOverlayImagen.setOnClickListener(listenerSeleccionImagen); // También el overlay
 
@@ -259,6 +271,30 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
         etIngredientesEspeciales.addTextChangedListener(textWatcherCambios);
         etNotasInternas.addTextChangedListener(textWatcherCambios);
         swDisponibilidadProducto.setOnCheckedChangeListener((buttonView, isChecked) -> marcarCambios());
+    }
+
+    private void solicitarPermisoAlmacenamientoParaGaleria() {
+        String permisoRequerido = Manifest.permission.READ_EXTERNAL_STORAGE;
+
+        if (ContextCompat.checkSelfPermission(this, permisoRequerido) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(ETIQUETA_DEBUG, "Permiso de lectura de almacenamiento ya concedido. Abriendo galería.");
+            selectorGaleriaLauncher.launch("image/*"); // Lanzar selector de galería
+        } else {
+            if (shouldShowRequestPermissionRationale(permisoRequerido)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Permiso Necesario")
+                        .setMessage("Se necesita acceso al almacenamiento para seleccionar una imagen de la galería.")
+                        .setPositiveButton("Entendido", (dialog, which) -> {
+                            solicitadorPermisosMultiplesLauncher.launch(new String[]{permisoRequerido});
+                        })
+                        .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                        .show();
+            } else {
+                // Solicitar permiso directamente
+                Log.d(ETIQUETA_DEBUG, "Solicitando permiso de lectura de almacenamiento.");
+                solicitadorPermisosMultiplesLauncher.launch(new String[]{permisoRequerido});
+            }
+        }
     }
 
     private void marcarCambios() {
@@ -356,12 +392,9 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
                         etPrecioProducto.setText(String.format(Locale.US, "%.2f", pastelExistente.getPrecioBase()));
                         actvCategoriaProducto.setText(pastelExistente.getCategoria(), false);
                         swDisponibilidadProducto.setChecked(pastelExistente.isDisponible());
-                        // Cargar campos adicionales si los tienes en el modelo
-                        // etIngredientesEspeciales.setText(pastelExistente.getIngredientesEspeciales());
-                        // etNotasInternas.setText(pastelExistente.getNotasInternas());
 
                         urlImagenSubidaOriginal = pastelExistente.getImagenUrl(); // Guardar URL original
-                        urlImagenParaGuardar = urlImagenSubidaOriginal; // Asumir que se usará esta si no se cambia
+                        urlImagenParaGuardar = urlImagenSubidaOriginal;
 
                         if (urlImagenSubidaOriginal != null && !urlImagenSubidaOriginal.isEmpty()) {
                             Glide.with(AgregarEditarProductoActivity.this)
@@ -400,7 +433,6 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
         String precioStr = etPrecioProducto.getText().toString().trim();
         String categoria = actvCategoriaProducto.getText().toString().trim();
         boolean disponible = swDisponibilidadProducto.isChecked();
-        // Obtener valores de ingredientes especiales y notas internas si los implementas
         // String ingredientesEsp = etIngredientesEspeciales.getText().toString().trim();
         // String notasInt = etNotasInternas.getText().toString().trim();
 
@@ -427,12 +459,11 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
             Toast.makeText(this, "Seleccione una categoría.", Toast.LENGTH_SHORT).show(); return;
         } else { tilCategoriaProducto.setError(null); }
 
-        // Si se seleccionó una nueva imagen local (uriImagenSeleccionada != null), necesita subirse.
+        // Si se seleccionó una nueva imagen local
         // urlImagenParaGuardar será null en este caso hasta que se suba.
         if (uriImagenSeleccionada != null && urlImagenParaGuardar == null) {
             subirImagenYLuegoGuardarProducto(nombre, descripcion, precioBase, categoria, disponible /*,ingredientesEsp, notasInt*/);
         } else {
-            // Si no se seleccionó nueva imagen local, se usa la urlImagenParaGuardar existente (que podría ser la original o null si no había).
             guardarDatosProducto(nombre, descripcion, precioBase, categoria, urlImagenParaGuardar, disponible /*, ingredientesEsp, notasInt*/);
         }
     }
@@ -466,8 +497,6 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
     private void guardarDatosProducto(String nombre, String descripcion, double precioBase, String categoria, String imagenFinalUrl, boolean disponible /*, String ingredientesEsp, String notasInt*/) {
         mostrarProgresoGeneral(true, idProductoExistente == null ? "Guardando producto..." : "Actualizando producto...");
 
-        // Crear el objeto Pastel. Asegúrate que el constructor y el modelo coincidan.
-        // Si tienes el campo opcionesPersonalizacion, deberás manejarlo.
         Pastel producto = new Pastel(nombre, descripcion, precioBase, categoria, imagenFinalUrl, disponible, null /* opcionesPersonalizacion */);
         // pastel.setIngredientesEspeciales(ingredientesEsp); // Si tienes estos campos en el modelo
         // pastel.setNotasInternas(notasInt);
@@ -495,8 +524,6 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
                     Toast.makeText(AgregarEditarProductoActivity.this, mensajeExito, Toast.LENGTH_LONG).show();
                     hayCambiosSinGuardar = false;
                     habilitarBotonGuardar(false);
-                    // Si era un producto nuevo, el idProductoExistente ahora tiene valor.
-                    // Podríamos querer finalizar solo si es nuevo, o siempre finalizar.
                     finish(); // Volver a la lista de catálogo
                 })
                 .addOnFailureListener(e -> {
@@ -518,8 +545,8 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
             habilitarBotonGuardar(false); // Deshabilitar botones mientras se guarda
         } else {
             progressOverlay.setVisibility(View.GONE);
-            // El estado del botón de guardar se restablece por marcarCambios() o después de guardar.
-            if(hayCambiosSinGuardar){ // Si aún hay cambios (ej. fallo la subida pero el usuario modificó algo más)
+            // El estado del botón de guardar se restablece
+            if(hayCambiosSinGuardar){ // Si aún hay cambios
                 habilitarBotonGuardar(true);
             }
         }
@@ -537,9 +564,10 @@ public class AgregarEditarProductoActivity extends AppCompatActivity {
             finish();
         }
     }
-
+/*
     @Override
     public void onBackPressed() {
         manejarSalida();
     }
+    */
 }

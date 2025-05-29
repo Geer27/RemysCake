@@ -229,7 +229,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="@drawable/gradient_warning"
+                    app:cardBackgroundColor="@android:color/transparent"
                     android:layout_marginEnd="6dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -240,8 +240,8 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
-
+                        android:padding="12dp"
+                        android:background="@drawable/gradient_warning">
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -278,9 +278,9 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="@drawable/gradient_info"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="6dp"
+                    app:cardBackgroundColor="@android:color/transparent"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground">
@@ -290,7 +290,8 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:padding="12dp"
+                        android:background="@drawable/gradient_info">
 
                         <ImageView
                             android:layout_width="20dp"
@@ -328,7 +329,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="@drawable/gradient_success"
+                    app:cardBackgroundColor="@android:color/transparent"
                     android:layout_marginStart="6dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -339,7 +340,8 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:padding="12dp"
+                        android:background="@drawable/gradient_success">
 
                         <ImageView
                             android:layout_width="20dp"
@@ -535,6 +537,7 @@
                     android:layout_marginBottom="16dp" />
 
                 <TextView
+                    android:id="@+id/tvEstadoVacioTitulo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No tienes reservas aún"
@@ -545,6 +548,7 @@
                     android:layout_marginBottom="8dp" />
 
                 <TextView
+                    android:id="@+id/tvEstadoVacioMensaje"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Crea tu primera reserva para comenzar a vender"

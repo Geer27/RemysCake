@@ -1,6 +1,7 @@
 package com.example.remyscake.activities;
 
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -8,7 +9,9 @@ import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout; // Para el saludo personalizado, si lo referenciamos
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,33 +31,69 @@ public class SellerDashboardActivity extends AppCompatActivity {
 
     private static final String ETIQUETA_DEBUG = "SellerDashboard";
 
+    // Vistas UI
     private TextView tvWelcomeSeller, tvMyReservationsCount, tvMyClientsCount;
     private CardView cvCrearReserva, cvMisReservas, cvGestionarClientes;
     private ImageButton btnNotificationsSeller, btnLogoutSeller;
+    // LinearLayout llSaludoPersonalizado;
 
+    // Firebase
     private FirebaseAuth autenticacionFirebase;
+    private FirebaseUser usuarioFirebaseActual;
     private DatabaseReference referenciaUsuarioActualBD;
     private DatabaseReference referenciaReservacionesBD;
     private DatabaseReference referenciaClientesBD;
-    private FirebaseUser usuarioFirebaseActual;
+
+    // Listeners de Firebase para removerlos en onPause
+    private ValueEventListener listenerUsuarioActual;
+    private ValueEventListener listenerMisReservas;
+    private ValueEventListener listenerMisClientes;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Asegúrate de haber corregido el XML antes de inflarlo
         setContentView(R.layout.activity_seller_dashboard);
 
         autenticacionFirebase = FirebaseAuth.getInstance();
         usuarioFirebaseActual = autenticacionFirebase.getCurrentUser();
 
+        if (usuarioFirebaseActual == null) {
+            // Si por alguna razón no hay usuario, volver al login
+            Toast.makeText(this, "Error: Sesión no válida.", Toast.LENGTH_LONG).show();
+            irALogin();
+            return;
+        }
+
         referenciaReservacionesBD = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_RESERVACIONES);
         referenciaClientesBD = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_CLIENTES);
+        referenciaUsuarioActualBD = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_USUARIOS).child(usuarioFirebaseActual.getUid());
 
         inicializarVistas();
+        establecerListeners();
+        // cargarDatosUsuario() y cargarEstadisticasVendedor() se llamarán en onResume
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         cargarDatosUsuario();
         cargarEstadisticasVendedor();
-        establecerListeners();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Remover listeners para evitar fugas de memoria y actualizaciones innecesarias
+        if (referenciaUsuarioActualBD != null && listenerUsuarioActual != null) {
+            referenciaUsuarioActualBD.removeEventListener(listenerUsuarioActual);
+        }
+        if (referenciaReservacionesBD != null && listenerMisReservas != null) {
+        }
+        if (referenciaClientesBD != null && listenerMisClientes != null) {
+        }
+    }
+
 
     private void inicializarVistas() {
         tvWelcomeSeller = findViewById(R.id.tvWelcomeSeller);
@@ -65,72 +104,105 @@ public class SellerDashboardActivity extends AppCompatActivity {
         cvMisReservas = findViewById(R.id.cvMisReservas);
         cvGestionarClientes = findViewById(R.id.cvGestionarClientes);
 
-        // btnNotificationsSeller = findViewById(R.id.btnNotificationsSeller); // Ya no está en el layout
+        btnNotificationsSeller = findViewById(R.id.btnNotificationsSeller);
         btnLogoutSeller = findViewById(R.id.btnLogoutSeller);
+
+        // llSaludoPersonalizado = findViewById(R.id.llSaludoPersonalizado); // Si tuvieras un ID para el LinearLayout del saludo
+    }
+
+    private void establecerListeners() {
+        btnLogoutSeller.setOnClickListener(v -> cerrarSesion());
+
+        btnNotificationsSeller.setOnClickListener(v -> {
+            Toast.makeText(this, "Notificaciones (Próximamente)", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, NotificacionesActivity.class);
+            startActivity(intent);
+        });
+
+        cvCrearReserva.setOnClickListener(v -> {
+            Intent intent = new Intent(SellerDashboardActivity.this, CrearReservaActivity.class);
+            startActivity(intent);
+        });
+
+        cvMisReservas.setOnClickListener(v -> {
+            Toast.makeText(this, "Mis Reservas (Próximamente)", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SellerDashboardActivity.this, MisReservasActivity.class);
+            startActivity(intent);
+        });
+
+        cvGestionarClientes.setOnClickListener(v -> {
+            Toast.makeText(this, "Gestionar Clientes (Próximamente)", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SellerDashboardActivity.this, GestionarClientesSellerActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void cargarDatosUsuario() {
-        if (usuarioFirebaseActual != null) {
-            String uid = usuarioFirebaseActual.getUid();
-            referenciaUsuarioActualBD = FirebaseDatabase.getInstance()
-                    .getReference(ConstantesApp.NODO_USUARIOS)
-                    .child(uid);
-
-            referenciaUsuarioActualBD.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        Usuario usuario = dataSnapshot.getValue(Usuario.class);
-                        if (usuario != null) {
-                            tvWelcomeSeller.setText("Bienvenido, " + usuario.getNombreCompleto());
-                        }
+        if (listenerUsuarioActual != null) {
+            referenciaUsuarioActualBD.removeEventListener(listenerUsuarioActual);
+        }
+        listenerUsuarioActual = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Usuario usuario = dataSnapshot.getValue(Usuario.class);
+                    if (usuario != null && usuario.getNombreCompleto() != null) {
+                        tvWelcomeSeller.setText("Bienvenido, " + usuario.getNombreCompleto().split(" ")[0]); // Solo el primer nombre
+                    } else {
+                        tvWelcomeSeller.setText("Bienvenido, Vendedor");
                     }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e(ETIQUETA_DEBUG, "Error al cargar datos del usuario: ", databaseError.toException());
+                } else {
                     tvWelcomeSeller.setText("Bienvenido, Vendedor");
                 }
-            });
-        } else {
-            tvWelcomeSeller.setText("Bienvenido, Vendedor");
-        }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(ETIQUETA_DEBUG, "Error al cargar datos del usuario: ", databaseError.toException());
+                tvWelcomeSeller.setText("Bienvenido, Vendedor");
+            }
+        };
+        referenciaUsuarioActualBD.addValueEventListener(listenerUsuarioActual);
     }
 
     private void cargarEstadisticasVendedor() {
         if (usuarioFirebaseActual == null) return;
 
+        // Remover listeners anteriores para evitar múltiples escuchas si onResume se llama varias veces
+        if (listenerMisReservas != null) {
+        }
+        if (listenerMisClientes != null) {
+            // Similar
+        }
+
+
         // Contar mis reservaciones (donde createdBy es mi UID)
         Query misReservasQuery = referenciaReservacionesBD.orderByChild("createdBy").equalTo(usuarioFirebaseActual.getUid());
-        misReservasQuery.addValueEventListener(new ValueEventListener() {
+        listenerMisReservas = new ValueEventListener() { // Asignar a la variable de instancia
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long count = 0;
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Podrías añadir filtros aquí, por ejemplo, no contar "cancelada" o "entregada" si quieres
-                    // String status = snapshot.child("status").getValue(String.class);
-                    // if (status != null && !(status.equals("entregada") || status.equals("cancelada"))) {
-                    //    count++;
-                    // }
-                    count++; // Por ahora cuenta todas las creadas por el vendedor
+                long countActivas = 0;
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        // Solo contar reservaciones que no estén "entregada" o "cancelada"
+                        String status = snapshot.child("status").getValue(String.class);
+                        if (status != null && !(status.equalsIgnoreCase("entregada") || status.equalsIgnoreCase("cancelada"))) {
+                            countActivas++;
+                        }
+                    }
                 }
-                tvMyReservationsCount.setText(String.valueOf(count));
+                tvMyReservationsCount.setText(String.valueOf(countActivas));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(ETIQUETA_DEBUG, "Error al contar mis reservaciones: ", databaseError.toException());
-                tvMyReservationsCount.setText("N/A");
+                tvMyReservationsCount.setText("0");
             }
-        });
+        };
+        misReservasQuery.addValueEventListener(listenerMisReservas);
 
-        // Contar mis clientes (donde creado_por es mi UID)
-        // NOTA: La estructura del nodo "clientes" debe tener un campo "creado_por" con el UID del vendedor.
-        // Si no es así, esta consulta no funcionará como se espera.
-        // Si los clientes no están directamente ligados a un vendedor que los creó,
-        // podrías necesitar otra lógica o simplemente mostrar "N/A" o un conteo total de clientes si el admin lo permite.
         Query misClientesQuery = referenciaClientesBD.orderByChild("creado_por").equalTo(usuarioFirebaseActual.getUid());
-        misClientesQuery.addValueEventListener(new ValueEventListener() {
+        listenerMisClientes = new ValueEventListener() { // Asignar a la variable de instancia
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 tvMyClientsCount.setText(String.valueOf(dataSnapshot.getChildrenCount()));
@@ -139,42 +211,19 @@ public class SellerDashboardActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(ETIQUETA_DEBUG, "Error al contar mis clientes: ", databaseError.toException());
-                tvMyClientsCount.setText("N/A");
+                tvMyClientsCount.setText("0");
             }
-        });
-    }
-
-
-    private void establecerListeners() {
-        btnLogoutSeller.setOnClickListener(v -> cerrarSesion());
-
-        //btnNotificationsSeller.setOnClickListener(v -> {
-        //    Toast.makeText(this, "Próximamente: Notificaciones del Vendedor", Toast.LENGTH_SHORT).show();
-        //});
-
-        cvCrearReserva.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Crear Nueva Reserva", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(SellerDashboardActivity.this, CrearReservaActivity.class);
-            // startActivity(intent);
-        });
-
-        cvMisReservas.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Mis Reservas", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(SellerDashboardActivity.this, MisReservasActivity.class);
-            // startActivity(intent);
-        });
-
-        cvGestionarClientes.setOnClickListener(v -> {
-            Toast.makeText(this, "Ir a Gestionar Mis Clientes", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(SellerDashboardActivity.this, GestionClientesActivity.class);
-            // intent.putExtra("FILTRO_VENDEDOR_UID", usuarioFirebaseActual.getUid()); // Para filtrar solo sus clientes
-            // startActivity(intent);
-        });
+        };
+        misClientesQuery.addValueEventListener(listenerMisClientes);
     }
 
     private void cerrarSesion() {
         autenticacionFirebase.signOut();
         Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+        irALogin();
+    }
+
+    private void irALogin() {
         Intent intent = new Intent(SellerDashboardActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

@@ -59,12 +59,11 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Pastel
     }
 
     static class PastelViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivProductoImagen;         // Coincide con tu ID
-        TextView tvProductoNombre;          // Coincide con tu ID
-        TextView tvProductoCategoria;       // Coincide con tu ID
-        TextView tvProductoPrecio;          // Coincide con tu ID
-        // No hay TextView para disponibilidad en tu layout, así que lo quitamos del ViewHolder
-        ImageButton btnEditarProducto;      // Coincide con tu ID
+        ImageView ivProductoImagen;
+        TextView tvProductoNombre;
+        TextView tvProductoCategoria;
+        TextView tvProductoPrecio;
+        ImageButton btnEditarProducto;
 
         public PastelViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,8 +79,6 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Pastel
             tvProductoCategoria.setText(pastel.getCategoria() != null ? pastel.getCategoria() : "N/A");
             tvProductoPrecio.setText(String.format(Locale.getDefault(), "$%.2f", pastel.getPrecioBase()));
 
-            // Lógica para disponibilidad (si decides añadirla al layout o manejarla de otra forma)
-            // if (pastel.isDisponible()) { ... } else { ... }
 
             if (pastel.getImagenUrl() != null && !pastel.getImagenUrl().isEmpty()) {
                 Glide.with(itemView.getContext())
@@ -92,16 +89,11 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Pastel
             } else {
                 // Si no hay imagen URL, podrías dejar el src del XML o poner un placeholder
                 ivProductoImagen.setImageResource(R.drawable.ic_cake); // Placeholder por defecto
-                // Si originalmente tenías un tint y quieres mantenerlo para el placeholder:
-                // ivProductoImagen.setColorFilter(ContextCompat.getColor(itemView.getContext(), R.color.admin_primary), android.graphics.PorterDuff.Mode.SRC_IN);
             }
-            // Si ya no usas el tint directamente en el XML para el placeholder:
-            // ivProductoImagen.clearColorFilter(); // Para asegurarte que no se tinte la imagen cargada
 
 
             itemView.setOnClickListener(v -> listener.onItemClick(pastel));
             btnEditarProducto.setOnClickListener(v -> listener.onEditClick(pastel));
         }
     }
-
 }

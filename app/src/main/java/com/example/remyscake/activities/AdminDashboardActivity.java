@@ -50,12 +50,13 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
 
         autenticacionFirebase = FirebaseAuth.getInstance();
 
-        // Inicializar vistas
+        // Linking todas las vistas del layout
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         btnMenuAdmin = findViewById(R.id.btnMenuAdmin);
-        // btnNotificationsAdmin = findViewById(R.id.btnNotificationsAdmin); // Ya no está el botón en el layout
-        btnLogoutAdmin = findViewById(R.id.btnLogoutAdmin); // Botón de logout en la toolbar
+        // el botón de notificaciones fue removido del diseño pero mantengo la referencia por si lo vuelven a pedir
+        // btnNotificationsAdmin = findViewById(R.id.btnNotificationsAdmin);
+        btnLogoutAdmin = findViewById(R.id.btnLogoutAdmin); // ahora está en la toolbar
         tvWelcomeAdmin = findViewById(R.id.tvWelcomeAdmin);
 
         tvTotalReservations = findViewById(R.id.tvTotalReservations);
@@ -71,12 +72,13 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
         configurarDrawer();
         configurarNavigationView();
         cargarDatosUsuario();
-        cargarEstadisticasRapidas(); // Método para cargar las estadísticas
+        cargarEstadisticasRapidas(); // carga el contador de reservas y usuarios en tiempo real
         establecerListeners();
     }
 
     private void configurarDrawer() {
-        // No necesitamos un ActionBarDrawerToggle si usamos un ImageButton personalizado para abrir el drawer
+        // usamos un ImageButton personalizado en lugar del ActionBarDrawerToggle default
+        // esto nos da más control sobre el diseño
         btnMenuAdmin.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -88,7 +90,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
 
     private void configurarNavigationView() {
         navigationView.setNavigationItemSelectedListener(this);
-        // Opcional: Cargar el menú dinámicamente si es necesario
+        // inflamos el menú manualmente para tener la opción de cambiarlo dinámicamente más adelante
         navigationView.inflateMenu(R.menu.admin_drawer_menu);
     }
 
@@ -100,6 +102,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
                     .getReference(ConstantesApp.NODO_USUARIOS)
                     .child(uid);
 
+            // solo leemos una vez los datos del usuario para el saludo
             referenciaUsuarioActualBD.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -107,7 +110,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
                         Usuario usuario = dataSnapshot.getValue(Usuario.class);
                         if (usuario != null) {
                             tvWelcomeAdmin.setText("Bienvenido, " + usuario.getNombreCompleto());
-                            // También podrías cargar nombre y correo en el header del NavigationView si lo tienes
+                            // TODO: actualizar el header del NavigationView cuando lo implementemos
                         }
                     }
                 }
@@ -115,30 +118,33 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.e(ETIQUETA_DEBUG, "Error al cargar datos del usuario: ", databaseError.toException());
+                    // fallback por si falla la carga
                     tvWelcomeAdmin.setText("Bienvenido, Administrador");
                 }
             });
         } else {
+            // no debería pasar pero por si acaso
             tvWelcomeAdmin.setText("Bienvenido, Administrador");
         }
     }
 
     private void cargarEstadisticasRapidas() {
-        // Aquí iría la lógica para obtener datos de Firebase y actualizar
-        // tvTotalReservations y tvTotalUsers.
-        // Ejemplo (datos dummy por ahora):
+        // contador de reservas activas
         DatabaseReference refReservas = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_RESERVACIONES);
         refReservas.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // getChildrenCount() me da el total de nodos hijos (cada reserva es un hijo)
                 tvTotalReservations.setText(String.valueOf(snapshot.getChildrenCount()));
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // si no puede cargar mostramos N/A
                 tvTotalReservations.setText("N/A");
             }
         });
 
+        // contador de usuarios registrados
         DatabaseReference refUsuarios = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_USUARIOS);
         refUsuarios.addValueEventListener(new ValueEventListener() {
             @Override
@@ -156,36 +162,32 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
     private void establecerListeners() {
         btnLogoutAdmin.setOnClickListener(v -> cerrarSesion());
 
+        // las notificaciones quedan pendientes para una próxima versión
         // btnNotificationsAdmin.setOnClickListener(v -> {
         //    Toast.makeText(this, "Próximamente: Notificaciones", Toast.LENGTH_SHORT).show();
         // });
 
         cvGestionarCatalogo.setOnClickListener(v -> {
-            //Toast.makeText(this, "Ir a Gestionar Catálogo", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(AdminDashboardActivity.this, GestionarCatalogoActivity.class);
             startActivity(intent);
         });
 
         cvGestionarUsuarios.setOnClickListener(v -> {
-            //Toast.makeText(this, "Ir a Gestionar Usuarios", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(AdminDashboardActivity.this, GestionarUsuariosActivity.class);
             startActivity(intent);
         });
 
         cvGestionarClientes.setOnClickListener(v -> {
-            //Toast.makeText(this, "Ir a Gestionar Clientes", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(AdminDashboardActivity.this, GestionarClientesActivity.class);
             startActivity(intent);
         });
 
         cvVerReservas.setOnClickListener(v -> {
-            //Toast.makeText(this, "Ir a Ver Reservas", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(AdminDashboardActivity.this, VerReservasActivity.class);
             startActivity(intent);
         });
 
         cvGenerarReportes.setOnClickListener(v -> {
-            //Toast.makeText(this, "Ir a Generar Reportes", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(AdminDashboardActivity.this, GenerarReportesActivity.class);
             startActivity(intent);
         });
@@ -195,6 +197,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
         autenticacionFirebase.signOut();
         Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(AdminDashboardActivity.this, LoginActivity.class);
+        // limpiamos el stack de activities para que no pueda volver atrás
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
@@ -204,12 +207,13 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int idElemento = item.getItemId();
 
-        // Usar if/else if en lugar de switch para IDs de recursos
+        // tuve que usar if/else porque el switch con R.id no compila bien en las nuevas versiones
         if (idElemento == R.id.nav_admin_home) {
-            // Ya estamos aquí o recargar dashboard
+            // ya estamos en el dashboard, podríamos refrescar los datos
             Toast.makeText(this, "Inicio (Dashboard)", Toast.LENGTH_SHORT).show();
         } else if (idElemento == R.id.nav_admin_catalogo) {
             Toast.makeText(this, "Desde Nav: Gestionar Catálogo", Toast.LENGTH_SHORT).show();
+            // TODO: descomentar cuando esté lista la activity
             // Intent intent = new Intent(this, GestionCatalogoActivity.class);
             // startActivity(intent);
         } else if (idElemento == R.id.nav_admin_usuarios) {
@@ -222,6 +226,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
             Toast.makeText(this, "Desde Nav: Generar Reportes", Toast.LENGTH_SHORT).show();
         } else if (idElemento == R.id.nav_admin_perfil) {
             Toast.makeText(this, "Desde Nav: Mi Perfil", Toast.LENGTH_SHORT).show();
+            // pendiente implementar el perfil del admin
             // Intent intent = new Intent(this, AdminProfileActivity.class);
             // startActivity(intent);
         } else if (idElemento == R.id.nav_admin_logout) {
@@ -234,10 +239,12 @@ public class AdminDashboardActivity extends AppCompatActivity implements Navigat
 
     @Override
     public void onBackPressed() {
+        // si el drawer está abierto, lo cerramos primero
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed(); // Comportamiento por defecto (cerrar actividad, etc.)
+            // si no, dejamos el comportamiento normal (salir de la app probablemente)
+            super.onBackPressed();
         }
     }
 }

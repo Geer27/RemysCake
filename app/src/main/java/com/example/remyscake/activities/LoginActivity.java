@@ -96,8 +96,6 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(ETIQUETA_DEBUG, "signInWithEmail: Éxito");
                         FirebaseUser usuarioFirebase = autenticacionFirebase.getCurrentUser();
                         if (usuarioFirebase != null) {
-                            // Aquí sí es correcto llamar a obtenerRolUsuarioYRedirigir
-                            // porque es el resultado de un intento de login manual.
                             obtenerRolUsuarioYRedirigir(usuarioFirebase.getUid());
                         } else {
                             mostrarBarraProgreso(false);

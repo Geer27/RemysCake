@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/opcion_editar_cliente"
+        android:title="Editar Cliente"
+        android:icon="@drawable/ic_edit" /> <!-- Opcional: puedes añadir iconos al menú -->
+    <item
+        android:id="@+id/opcion_eliminar_cliente"
+        android:title="Eliminar Cliente"
+        android:icon="@drawable/ic_delete" />
+    <!-- Puedes añadir más opciones como "Ver Detalles", "Marcar como Inactivo", etc. -->
+</menu>

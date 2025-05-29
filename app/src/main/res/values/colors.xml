@@ -35,6 +35,7 @@
     <color name="production_active">#E67E22</color>
     <color name="production_active_light">#FDF2E9</color>
     <color name="production_ready">#27AE60</color>
+    <color name="production_ready_light">#69C993</color>
 
     <color name="warning_color">#F39C12</color>
     <color name="warning_light">#FEF3E0</color>
@@ -44,6 +45,10 @@
     <color name="info_light">#EBF7FF</color>
     <color name="error_color">#E74C3C</color>
     <color name="error_light">#FDEDEC</color>
+
+    <color name="text_primary_on_accent">#212121</color>
+    <color name="background_light_gray">#d3d3d3</color>
+
 
     <color name="background_light">#F8F9FA</color>
 

@@ -264,7 +264,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="@drawable/gradient_urgent"
+                    app:cardBackgroundColor="@android:color/transparent"
                     android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -275,7 +275,8 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:padding="12dp"
+                        android:background="@drawable/gradient_urgent">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -320,7 +321,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="@drawable/gradient_today"
+                    app:cardBackgroundColor="@android:color/transparent"
                     android:layout_marginStart="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -331,7 +332,8 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="12dp">
+                        android:padding="12dp"
+                        android:background="@drawable/gradient_today">
 
                         <ImageView
                             android:layout_width="24dp"

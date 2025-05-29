@@ -10,10 +10,9 @@ public class Categoria {
     public String id; // ID del nodo de Firebase
 
     public String nombre;
-    public String descripcion; // Opcional
+    public String descripcion;
 
     public Categoria() {
-        // Constructor vacío requerido por Firebase
     }
 
     public Categoria(String nombre, String descripcion) {
@@ -47,7 +46,6 @@ public class Categoria {
         this.descripcion = descripcion;
     }
 
-    // Para usar en ArrayAdapter (muestra el nombre en el Spinner/AutoCompleteTextView)
     @Override
     public String toString() {
         return nombre;

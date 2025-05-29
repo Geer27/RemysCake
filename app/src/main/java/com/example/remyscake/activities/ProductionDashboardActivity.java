@@ -1,5 +1,6 @@
 package com.example.remyscake.activities;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -7,11 +8,13 @@ import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.remyscake.R;
+import com.example.remyscake.models.Reserva;
 import com.example.remyscake.models.Usuario;
 import com.example.remyscake.utils.ConstantesApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,37 +23,55 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class ProductionDashboardActivity extends AppCompatActivity {
 
     private static final String ETIQUETA_DEBUG = "ProductionDashboard";
 
+    // Vistas UI
     private TextView tvWelcomeProduction, tvKitchenStatus;
     private TextView tvPendingCount, tvInProductionCount, tvReadyCount;
     private TextView tvPendingBadge, tvActiveBadge, tvReadyBadge;
     private CardView cvReservasPendientes, cvReservasEnProduccion, cvListosParaEntrega;
     private ImageButton btnRefreshProduction, btnLogoutProduction;
 
+    // Firebase
     private FirebaseAuth autenticacionFirebase;
     private DatabaseReference referenciaUsuarioActualBD;
     private DatabaseReference referenciaReservacionesBD;
-
+    private ValueEventListener listenerEstadisticas; // Listener para las estadísticas
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Asegúrate de haber corregido el XML antes de inflarlo
-        setContentView(R.layout.activity_production_dashboard);
+        setContentView(R.layout.activity_production_dashboard); // Tu layout XML
 
         autenticacionFirebase = FirebaseAuth.getInstance();
         referenciaReservacionesBD = FirebaseDatabase.getInstance().getReference(ConstantesApp.NODO_RESERVACIONES);
 
         inicializarVistas();
-        cargarDatosUsuario();
-        cargarEstadisticasReservaciones(); // Cargar todas las estadísticas de reservaciones
         establecerListeners();
+        // cargarDatosUsuario() y cargarEstadisticasReservaciones() se llaman en onResume
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarDatosUsuario();
+        cargarEstadisticasReservaciones();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Remover listener para evitar fugas de memoria
+        if (referenciaReservacionesBD != null && listenerEstadisticas != null) {
+            referenciaReservacionesBD.removeEventListener(listenerEstadisticas);
+        }
+        if (referenciaUsuarioActualBD != null) { // Si el listener de usuario fuera continuo
+            // referenciaUsuarioActualBD.removeEventListener(listenerUsuario);
+        }
     }
 
     private void inicializarVistas() {
@@ -81,14 +102,21 @@ public class ProductionDashboardActivity extends AppCompatActivity {
                     .getReference(ConstantesApp.NODO_USUARIOS)
                     .child(uid);
 
+            // Usar addListenerForSingleValueEvent si solo necesitas cargarlo una vez al entrar
             referenciaUsuarioActualBD.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         Usuario usuario = dataSnapshot.getValue(Usuario.class);
-                        if (usuario != null) {
-                            tvWelcomeProduction.setText("Bienvenido, " + usuario.getNombreCompleto());
+                        if (usuario != null && usuario.getNombreCompleto() != null) {
+                            // Mostrar solo el primer nombre para brevedad si es largo
+                            String[] nombres = usuario.getNombreCompleto().split(" ");
+                            tvWelcomeProduction.setText("Bienvenido, " + nombres[0]);
+                        } else {
+                            tvWelcomeProduction.setText("Bienvenido, Chef");
                         }
+                    } else {
+                        tvWelcomeProduction.setText("Bienvenido, Chef");
                     }
                 }
                 @Override
@@ -98,38 +126,44 @@ public class ProductionDashboardActivity extends AppCompatActivity {
                 }
             });
         } else {
-            tvWelcomeProduction.setText("Bienvenido, Chef");
+            tvWelcomeProduction.setText("Bienvenido, Chef"); // Fallback
         }
     }
 
     private void cargarEstadisticasReservaciones() {
-        // Listener para contar reservaciones por estado
-        referenciaReservacionesBD.addValueEventListener(new ValueEventListener() {
+        if (listenerEstadisticas != null) { // Remover listener anterior si existe
+            referenciaReservacionesBD.removeEventListener(listenerEstadisticas);
+        }
+        listenerEstadisticas = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long pendientes = 0;
                 long enProduccion = 0;
                 long listos = 0;
-                long totalActivas = 0; // Pendientes + En Producción
+                long totalActivasCocina = 0;
 
-                for (DataSnapshot reservaSnapshot : dataSnapshot.getChildren()) {
-                    // Asumiendo que cada reservación tiene un campo "status"
-                    String estado = reservaSnapshot.child("status").getValue(String.class);
-                    if (estado != null) {
-                        switch (estado) {
-                            case "confirmada": // O "pendiente" si ese es el estado inicial para producción
-                            case "pendiente":
-                                pendientes++;
-                                totalActivas++;
-                                break;
-                            case "en_produccion":
-                                enProduccion++;
-                                totalActivas++;
-                                break;
-                            case "lista_para_entrega":
-                                listos++;
-                                break;
-                            // No contamos "entregada" o "cancelada" en estas estadísticas activas
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot reservaSnapshot : dataSnapshot.getChildren()) {
+                        Reserva reserva = reservaSnapshot.getValue(Reserva.class);
+                        if (reserva != null && reserva.getStatus() != null) {
+                            String estado = reserva.getStatus().toLowerCase(); // Normalizar a minúsculas
+                            switch (estado) {
+                                case "confirmada":
+                                case "pendiente":
+                                    pendientes++;
+                                    totalActivasCocina++;
+                                    break;
+                                case "en_produccion":
+                                case "en produccion":
+                                    enProduccion++;
+                                    totalActivasCocina++;
+                                    break;
+                                case "lista_para_entrega":
+                                case "lista para entrega":
+                                    listos++;
+                                    // No contamos 'listos' como activos para la cocina, ya están terminados.
+                                    break;
+                            }
                         }
                     }
                 }
@@ -142,25 +176,22 @@ public class ProductionDashboardActivity extends AppCompatActivity {
                 tvActiveBadge.setText(String.valueOf(enProduccion));
                 tvReadyBadge.setText(String.valueOf(listos));
 
-                if (totalActivas == 1) {
-                    tvKitchenStatus.setText(totalActivas + " pedido activo");
+                if (totalActivasCocina == 1) {
+                    tvKitchenStatus.setText(totalActivasCocina + " pedido activo");
                 } else {
-                    tvKitchenStatus.setText(totalActivas + " pedidos activos");
+                    tvKitchenStatus.setText(totalActivasCocina + " pedidos activos");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(ETIQUETA_DEBUG, "Error al cargar estadísticas de reservaciones: ", databaseError.toException());
-                tvKitchenStatus.setText("Error al cargar estado");
-                tvPendingCount.setText("N/A");
-                tvInProductionCount.setText("N/A");
-                tvReadyCount.setText("N/A");
-                tvPendingBadge.setText("0");
-                tvActiveBadge.setText("0");
-                tvReadyBadge.setText("0");
+                tvKitchenStatus.setText("Error al cargar");
+                tvPendingCount.setText("-"); tvInProductionCount.setText("-"); tvReadyCount.setText("-");
+                tvPendingBadge.setText("0"); tvActiveBadge.setText("0"); tvReadyBadge.setText("0");
             }
-        });
+        };
+        referenciaReservacionesBD.addValueEventListener(listenerEstadisticas);
     }
 
 
@@ -172,26 +203,28 @@ public class ProductionDashboardActivity extends AppCompatActivity {
             cargarEstadisticasReservaciones(); // Vuelve a cargar las estadísticas
         });
 
-        cvReservasPendientes.setOnClickListener(v -> {
-            Toast.makeText(this, "Ver Reservas Pendientes", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(ProductionDashboardActivity.this, ListaReservasActivity.class);
-            // intent.putExtra("ESTADO_FILTRO", "pendiente"); // O "confirmada"
-            // startActivity(intent);
-        });
+        // Listener para las CardViews que llevan a la lista de reservas
+        View.OnClickListener listenerVerListaReservas = view -> {
+            String estadoFiltro = "";
+            int id = view.getId();
+            if (id == R.id.cvReservasPendientes) {
+                estadoFiltro = "pendiente";
+            } else if (id == R.id.cvReservasEnProduccion) {
+                estadoFiltro = "en_produccion";
+            } else if (id == R.id.cvListosParaEntrega) {
+                estadoFiltro = "lista_para_entrega";
+            }
 
-        cvReservasEnProduccion.setOnClickListener(v -> {
-            Toast.makeText(this, "Ver Reservas en Producción", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(ProductionDashboardActivity.this, ListaReservasActivity.class);
-            // intent.putExtra("ESTADO_FILTRO", "en_produccion");
-            // startActivity(intent);
-        });
+            if (!estadoFiltro.isEmpty()) {
+                Intent intent = new Intent(ProductionDashboardActivity.this, ListaReservasProductionActivity.class); // Nueva Actividad
+                intent.putExtra("ESTADO_FILTRO_PRODUCCION", estadoFiltro);
+                startActivity(intent);
+            }
+        };
 
-        cvListosParaEntrega.setOnClickListener(v -> {
-            Toast.makeText(this, "Ver Reservas Listas para Entrega", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(ProductionDashboardActivity.this, ListaReservasActivity.class);
-            // intent.putExtra("ESTADO_FILTRO", "lista_para_entrega");
-            // startActivity(intent);
-        });
+        cvReservasPendientes.setOnClickListener(listenerVerListaReservas);
+        cvReservasEnProduccion.setOnClickListener(listenerVerListaReservas);
+        cvListosParaEntrega.setOnClickListener(listenerVerListaReservas);
     }
 
     private void cerrarSesion() {

@@ -12,7 +12,6 @@ public class RemysApp extends Application {
         try {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         } catch (Exception e) {
-            // Log.e("PasteleriaApp", "Error al habilitar la persistencia de Firebase: " + e.getMessage());
         }
 
     }

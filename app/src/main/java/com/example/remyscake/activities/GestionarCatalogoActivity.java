@@ -17,9 +17,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.remyscake.R;        // Asegúrate que este sea tu R
+import com.example.remyscake.R;
 import com.example.remyscake.adapters.CatalogoAdapter;
-import com.example.remyscake.models.Categoria; // Importa el modelo Categoria
+import com.example.remyscake.models.Categoria;
 import com.example.remyscake.models.Pastel;
 import com.example.remyscake.utils.ConstantesApp;
 import com.google.android.material.chip.Chip;
@@ -124,8 +124,6 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
         });
 
         btnAdministrarCategorias.setOnClickListener(v -> {
-            // Aquí podrías mostrar un diálogo con opciones "Agregar Categoría", "Ver/Editar Categorías"
-            // Por ahora, solo abriremos el diálogo para agregar una nueva.
             mostrarDialogoAgregarEditarCategoria(null, null); // null para agregar nueva
         });
 
@@ -168,8 +166,6 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
                         }
                     }
                 }
-                // Eliminar duplicados si los hubiera (aunque el Set lo haría mejor)
-                // y ordenar (excepto "Todos")
                 if (nombresCategoriasParaChips.size() > 1) {
                     Set<String> setUnico = new HashSet<>(nombresCategoriasParaChips.subList(1, nombresCategoriasParaChips.size()));
                     List<String> tempSort = new ArrayList<>(setUnico);
@@ -211,8 +207,6 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
         for (String nombreCategoria : nombresCategoriasParaChips) {
             Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip_filtro_item, chipGroupCategorias, false);
             chip.setText(nombreCategoria);
-            // El listener de checked state del group se encargará
-            // chip.setOnClickListener(v -> chipGroupCategorias.check(chip.getId())); // No es necesario si el listener del grupo funciona bien
 
             if (nombreCategoria.equals(categoriaSeleccionadaPreviamente)) {
                 chip.setChecked(true);
@@ -269,7 +263,7 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
                 filtrarProductosPorCategoria(categoriaAFiltrar);
 
                 if (listaTodosLosProductos.isEmpty() && chipGroupCategorias.getCheckedChipId() == View.NO_ID) {
-                    // Este caso es cuando no hay productos y "Todos" está implícitamente seleccionado (o no hay chips)
+                    // Este caso es cuando no hay productos
                     tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
                     tvSinProductos.setVisibility(View.VISIBLE);
                     rvProductos.setVisibility(View.GONE);
@@ -320,8 +314,6 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
             if (categoria.equalsIgnoreCase("Todos") && listaTodosLosProductos.isEmpty()) {
                 tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
             } else if (categoria.equalsIgnoreCase("Todos") && !listaTodosLosProductos.isEmpty()){
-                // No debería llegar aquí si "Todos" muestra todos los productos y la lista general no está vacía.
-                // Pero si llega, significa que listaTodosLosProductos está vacía.
                 tvSinProductos.setText("El catálogo está vacío. ¡Agrega productos!");
             }
             else {
@@ -388,8 +380,6 @@ public class GestionarCatalogoActivity extends AppCompatActivity implements Cata
             refParaGuardar.setValue(nuevaCategoria)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Categoría '" + nombre + "' agregada.", Toast.LENGTH_SHORT).show();
-                        // No es necesario llamar a cargarCategoriasParaChips() aquí si usas addValueEventListener
-                        // El listener se disparará automáticamente y actualizará los chips.
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });

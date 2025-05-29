@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/tvItemNombreProducto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Nombre del Producto"
+        android:textSize="12sp"
+        android:textColor="@color/text_primary" />
+
+    <TextView
+        android:id="@+id/tvItemCantidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x1"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"/>
+
+    <TextView
+        android:id="@+id/tvItemPrecioTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$25.00"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary" />
+</LinearLayout>

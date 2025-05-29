@@ -3,10 +3,12 @@ package com.example.remyscake.models;
 
 import com.google.firebase.database.Exclude; // Para el ID local
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.io.Serializable;
 import java.util.Map; // Para opciones de personalización
 
 @IgnoreExtraProperties
-public class Pastel {
+public class Pastel implements Serializable {
 
     @Exclude // Para que Firebase no intente guardar/leer 'id' directamente del objeto, lo manejaremos como key del nodo
     public String id; // ID del nodo de Firebase
@@ -14,16 +16,16 @@ public class Pastel {
     public String nombre;
     public String descripcion;
     public double precioBase;
-    public String categoria; // Ej: "Pasteles Clásicos", "Cupcakes", "Postres Especiales"
+    public String categoria;
     public String imagenUrl;
     public boolean disponible;
-    public Map<String, Map<String, Double>> opcionesPersonalizacion; // Opcional, si tienes personalizaciones complejas
+    public Map<String, Map<String, Double>> opcionesPersonalizacion;
 
     // Constructor vacío requerido por Firebase
     public Pastel() {
     }
 
-    // Constructor principal (sin id, ya que se asigna desde la key de Firebase)
+    // Constructor principal
     public Pastel(String nombre, String descripcion, double precioBase, String categoria, String imagenUrl, boolean disponible, Map<String, Map<String, Double>> opcionesPersonalizacion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -60,7 +62,7 @@ public class Pastel {
         return imagenUrl;
     }
 
-    public boolean isDisponible() { // Getter para booleanos suele ser "is"
+    public boolean isDisponible() {
         return disponible;
     }
 
